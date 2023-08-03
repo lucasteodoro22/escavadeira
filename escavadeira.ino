@@ -2,14 +2,16 @@
 
 Servo servoConcha;  // Chama a biblioteca para controle do servo da Concha
 int valorPotConcha; //Potenciometro da concha
-int pinoPotConcha = A0; // Porta Potenciometro da conha
+int pinoPotConcha = A0; // Porta Potenciometro da concha
 float posicaoConcha = 90; // Posição da concha ao ligar
 float posicaoConchaAntiga = posicaoConcha;
 float acrescimoConcha = 0; // Acrescimo da concha exponencial ao valor do potenciometro
+int posicaoMaximaConcha = 132; // Valor em graus para posicao maxima da concha
+int posicaoMinimaConcha = 30; // Valor em graus para posicao maxima da concha
 
 Servo servoBraco;  // Chama a biblioteca para controle do servo da Braco
 int valorPotBraco; //Potenciometro da Braco
-int pinoPotBraco = A1; // Porta Potenciometro da conha
+int pinoPotBraco = A1; // Porta Potenciometro do braco
 float posicaoBraco = 90; // Posição da Braco ao ligar
 float posicaoBracoAntiga = posicaoBraco;
 float acrescimoBraco = 0; // Acrescimo da Braco exponencial ao valor do potenciometro
@@ -37,8 +39,11 @@ void loop() {
       acrescimoConcha = 0.1;
     }
     posicaoConcha = posicaoConcha + acrescimoConcha;
-    if(posicaoConcha > 180){
-      posicaoConcha = 180;
+    if(posicaoConcha > posicaoMaximaConcha){
+      posicaoConcha = posicaoMaximaConcha;
+    }
+    if(posicaoConcha < posicaoMinimaConcha){
+      posicaoConcha = posicaoMinimaConcha;
     }
     if(posicaoConchaAntiga != posicaoConcha){
       servoConcha.write(posicaoConcha); //Aplica a posição da concha em graus
