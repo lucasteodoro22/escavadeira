@@ -6,7 +6,7 @@ int pinoPotConcha = A0; // Porta Potenciometro da concha
 float posicaoConcha = 90; // Posição da concha ao ligar
 float posicaoConchaAntiga = posicaoConcha;
 float acrescimoConcha = 0; // Acrescimo da concha exponencial ao valor do potenciometro
-int posicaoMaximaConcha = 132; // Valor em graus para posicao maxima da concha
+int posicaoMaximaConcha = 138; // Valor em graus para posicao maxima da concha
 int posicaoMinimaConcha = 30; // Valor em graus para posicao maxima da concha
 
 Servo servoBraco;  // Chama a biblioteca para controle do servo da Braco
