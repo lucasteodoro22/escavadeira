@@ -1,81 +1,73 @@
 #include <Servo.h>
 
 
-//Configurações da Concha
-Servo servoConcha;  // Chama a biblioteca para controle do servo da Concha
-int valorPotConcha; //Potenciometro da concha
-int pinoPotConcha = A0; // Porta Potenciometro da concha
-float posicaoConcha = 90; // Posição da concha ao ligar
-float posicaoConchaAntiga = posicaoConcha;
-float acrescimoConcha = 0; // Acrescimo da concha exponencial ao valor do potenciometro
-int posicaoMaximaConcha = 138; // Valor em graus para posicao maxima da concha
-int posicaoMinimaConcha = 30; // Valor em graus para posicao maxima da concha
 
-
-//Configurações do braco
-Servo servoBraco;  // Chama a biblioteca para controle do servo da Braco
-int valorPotBraco; //Potenciometro da Braco
-int pinoPotBraco = A1; // Porta Potenciometro do braco
-float posicaoBraco = 90; // Posição da Braco ao ligar
-float posicaoBracoAntiga = posicaoBraco;
-float acrescimoBraco = 0; // Acrescimo da Braco exponencial ao valor do potenciometro
-int posicaoMaximaBraco = 138; // Valor em graus para posicao maxima do braco
-int posicaoMinimaBraco = 30; // Valor em graus para posicao maxima do braco
-
-
-//Configurações Conjunto articulado
-Servo servoConj;  // Chama a biblioteca para controle do servo da Conjunto articulado
-int valorPotConj; //Potenciometro da Conjunto articulado
-int pinoPotConj = A2; // Porta Potenciometro do Conjunto articulado
-float posicaoConj = 90; // Posição da Conjunto articulado ao ligar
-float posicaoConjAntiga = posicaoConj;
-float acrescimoConj = 0; // Acrescimo da Conjunto articulado exponencial ao valor do potenciometro
-int posicaoMaximaConj = 138; // Valor em graus para posicao maxima do Conjunto articulado
-int posicaoMinimaConj = 30; // Valor em graus para posicao maxima do Conjunto articulado
-
-
-//Configurações Rotacao da maquina
-Servo servoRotMaquina;  // Chama a biblioteca para controle do servo da Rotacao da maquina
-int valorPotRotMaquina; //Potenciometro da Rotacao da maquina
-int pinoPotRotMaquina = A3; // Porta Potenciometro do Rotacao da maquina
-float posicaoRotMaquina = 90; // Posição da Rotacao da maquina ao ligar
-float posicaoRotMaquinaAntiga = posicaoRotMaquina;
-float acrescimoRotMaquina = 0; // Acrescimo da Rotacao da maquina exponencial ao valor do potenciometro
-int posicaoMaximaRotMaquina = 138; // Valor em graus para posicao maxima do Rotacao da maquina
-int posicaoMinimaRotMaquina = 30; // Valor em graus para posicao maxima do Rotacao da maquina
-
-
-//Configurações Esteira Direita
-Servo servoEstDir;  // Chama a biblioteca para controle do servo da Esteira Direita
-int valorPotEstDir; //Potenciometro da Esteira Direita
-int pinoPotEstDir = A3; // Porta Potenciometro do Esteira Direita
-float posicaoEstDir = 90; // Posição da Esteira Direita ao ligar
-float posicaoEstDirAntiga = posicaoEstDir;
-float acrescimoEstDir = 0; // Acrescimo da Esteira Direita exponencial ao valor do potenciometro
-int posicaoMaximaEstDir = 138; // Valor em graus para posicao maxima do Esteira Direita
-int posicaoMinimaEstDir = 30; // Valor em graus para posicao maxima do Esteira Direita
-
-
-//Configurações Esteira Esquerda
-Servo servoEstEsq;  // Chama a biblioteca para controle do servo da Esteira Esquerda
-int valorPotEstEsq; //Potenciometro da Esteira Esquerda
-int pinoPotEstEsq = A3; // Porta Potenciometro do Esteira Esquerda
-float posicaoEstEsq = 90; // Posição da Esteira Esquerda ao ligar
-float posicaoEstEsqAntiga = posicaoEstEsq;
-float acrescimoEstEsq = 0; // Acrescimo da Esteira Esquerda exponencial ao valor do potenciometro
-int posicaoMaximaEstEsq = 138; // Valor em graus para posicao maxima do Esteira Esquerda
-int posicaoMinimaEstEsq = 30; // Valor em graus para posicao maxima do Esteira Esquerda
 
 
 
 void setup() {
   Serial.begin(9600);
+
+  //Configurações da Concha
+  Servo servoConcha;  // Chama a biblioteca para controle do servo da Concha
   servoConcha.attach(11);  //Pino PWM que manda sinal para o servo da Concha
+  int valorPotConcha; //Potenciometro da concha
+  int pinoPotConcha = A0; // Porta Potenciometro da concha
+  float posicaoConcha = 90; // Posição da concha ao ligar
+  float posicaoConchaAntiga = posicaoConcha;
+  float acrescimoConcha = 0; // Acrescimo da concha exponencial ao valor do potenciometro
+  int posicaoMaximaConcha = 138; // Valor em graus para posicao maxima da concha
+  int posicaoMinimaConcha = 30; // Valor em graus para posicao maxima da concha
+
+
+  //Configurações do braco
+  Servo servoBraco;  // Chama a biblioteca para controle do servo da Braco
   servoBraco.attach(10);  //Pino PWM que manda sinal para o servo do Braco
+  int valorPotBraco; //Potenciometro da Braco
+  int pinoPotBraco = A1; // Porta Potenciometro do braco
+  float posicaoBraco = 90; // Posição da Braco ao ligar
+  float posicaoBracoAntiga = posicaoBraco;
+  float acrescimoBraco = 0; // Acrescimo da Braco exponencial ao valor do potenciometro
+  int posicaoMaximaBraco = 138; // Valor em graus para posicao maxima do braco
+  int posicaoMinimaBraco = 30; // Valor em graus para posicao maxima do braco
+
+
+  //Configurações Conjunto articulado
+  Servo servoConj;  // Chama a biblioteca para controle do servo da Conjunto articulado
   servoRotMaquina.attach(9);  //Pino PWM que manda sinal para o servo do Conjunto articulado
+  int valorPotConj; //Potenciometro da Conjunto articulado
+  int pinoPotConj = A2; // Porta Potenciometro do Conjunto articulado
+  float posicaoConj = 90; // Posição da Conjunto articulado ao ligar
+  float posicaoConjAntiga = posicaoConj;
+  float acrescimoConj = 0; // Acrescimo da Conjunto articulado exponencial ao valor do potenciometro
+  int posicaoMaximaConj = 138; // Valor em graus para posicao maxima do Conjunto articulado
+  int posicaoMinimaConj = 30; // Valor em graus para posicao maxima do Conjunto articulado
+
+
+  //Configurações Rotacao da maquina
+  Servo servoRotMaquina;  // Chama a biblioteca para controle do servo da Rotacao da maquina
   servoBraco.attach(6);  //Pino PWM que manda sinal para o servo da Rotação da maquina
+  int valorPotRotMaquina; //Potenciometro da Rotacao da maquina
+  int pinoPotRotMaquina = A3; // Porta Potenciometro do Rotacao da maquina
+  float posicaoRotMaquina = 90; // Posição da Rotacao da maquina ao ligar
+  float posicaoRotMaquinaAntiga = posicaoRotMaquina;
+  float acrescimoRotMaquina = 0; // Acrescimo da Rotacao da maquina exponencial ao valor do potenciometro
+  int posicaoMaximaRotMaquina = 138; // Valor em graus para posicao maxima do Rotacao da maquina
+  int posicaoMinimaRotMaquina = 30; // Valor em graus para posicao maxima do Rotacao da maquina
+
+
+  //Configurações Esteira Direita/Esquerda
+  Servo servoEstDir;  // Chama a biblioteca para controle do servo da Esteira Direita
+  Servo servoEstEsq;  // Chama a biblioteca para controle do servo da Esteira Esquerda
   servoEstDir.attach(5);  //Pino PWM que manda sinal para o servo da Esteira Direita
   servoEstEsq.attach(3);  //Pino PWM que manda sinal para o servo da Esteira Esquerda
+  int valorPotEstDirEsq; //Potenciometro da Esteira Direita/Esquerda
+  int pinoPotEstDirEsq = A4; // Porta Potenciometro da Esteira Direita/Esquerda
+
+  //Configurações Esteira Frente/Re
+  int valorPotFrenteRe; //Potenciometro da Esteira Frente/Re
+  int pinoPotFrenteRe = A5; // Porta Potenciometro da Esteira Frente/Re
+  
 }
 
 void loop() {
@@ -91,6 +83,7 @@ void loop() {
       acrescimoConcha = 1;
     }else if(valorPotConcha > 600){
       acrescimoConcha = 0.5;
+
     }else{
       acrescimoConcha = 0.1;
     }
