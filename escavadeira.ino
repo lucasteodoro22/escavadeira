@@ -1,16 +1,7 @@
 #include <Servo.h>
 
-
-
-
-
-
-void setup() {
-  Serial.begin(9600);
-
   //Configurações da Concha
   Servo servoConcha;  // Chama a biblioteca para controle do servo da Concha
-  servoConcha.attach(11);  //Pino PWM que manda sinal para o servo da Concha
   int valorPotConcha; //Potenciometro da concha
   int pinoPotConcha = A0; // Porta Potenciometro da concha
   float posicaoConcha = 90; // Posição da concha ao ligar
@@ -22,7 +13,6 @@ void setup() {
 
   //Configurações do braco
   Servo servoBraco;  // Chama a biblioteca para controle do servo da Braco
-  servoBraco.attach(10);  //Pino PWM que manda sinal para o servo do Braco
   int valorPotBraco; //Potenciometro da Braco
   int pinoPotBraco = A1; // Porta Potenciometro do braco
   float posicaoBraco = 90; // Posição da Braco ao ligar
@@ -34,7 +24,6 @@ void setup() {
 
   //Configurações Conjunto articulado
   Servo servoConj;  // Chama a biblioteca para controle do servo da Conjunto articulado
-  servoRotMaquina.attach(9);  //Pino PWM que manda sinal para o servo do Conjunto articulado
   int valorPotConj; //Potenciometro da Conjunto articulado
   int pinoPotConj = A2; // Porta Potenciometro do Conjunto articulado
   float posicaoConj = 90; // Posição da Conjunto articulado ao ligar
@@ -46,7 +35,6 @@ void setup() {
 
   //Configurações Rotacao da maquina
   Servo servoRotMaquina;  // Chama a biblioteca para controle do servo da Rotacao da maquina
-  servoBraco.attach(6);  //Pino PWM que manda sinal para o servo da Rotação da maquina
   int valorPotRotMaquina; //Potenciometro da Rotacao da maquina
   int pinoPotRotMaquina = A3; // Porta Potenciometro do Rotacao da maquina
   float posicaoRotMaquina = 90; // Posição da Rotacao da maquina ao ligar
@@ -59,15 +47,24 @@ void setup() {
   //Configurações Esteira Direita/Esquerda
   Servo servoEstDir;  // Chama a biblioteca para controle do servo da Esteira Direita
   Servo servoEstEsq;  // Chama a biblioteca para controle do servo da Esteira Esquerda
-  servoEstDir.attach(5);  //Pino PWM que manda sinal para o servo da Esteira Direita
-  servoEstEsq.attach(3);  //Pino PWM que manda sinal para o servo da Esteira Esquerda
   int valorPotEstDirEsq; //Potenciometro da Esteira Direita/Esquerda
   int pinoPotEstDirEsq = A4; // Porta Potenciometro da Esteira Direita/Esquerda
 
   //Configurações Esteira Frente/Re
   int valorPotFrenteRe; //Potenciometro da Esteira Frente/Re
   int pinoPotFrenteRe = A5; // Porta Potenciometro da Esteira Frente/Re
-  
+
+
+
+
+void setup() {
+  Serial.begin(9600);
+  servoConcha.attach(11);  //Pino PWM que manda sinal para o servo da Concha
+  servoBraco.attach(10);  //Pino PWM que manda sinal para o servo do Braco
+  servoConj.attach(9);  //Pino PWM que manda sinal para o servo do Conjunto articulado
+  servoRotMaquina.attach(6);  //Pino PWM que manda sinal para o servo da Rotação da maquina
+  servoEstDir.attach(5);  //Pino PWM que manda sinal para o servo da Esteira Direita
+  servoEstEsq.attach(3);  //Pino PWM que manda sinal para o servo da Esteira Esquerda
 }
 
 void loop() {
@@ -183,5 +180,10 @@ void loop() {
     }
   }
   //------ Fim Controle da Braco ---------------
+
+
+  //------ Fim Controle Movimento ---------------
+  servoEstDir.write(valorPotEstDirEsq); //Aplica a posição da Braco em graus
+  //------ Fim Controle Movimento ---------------
   
 }
