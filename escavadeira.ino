@@ -1,6 +1,8 @@
 #include <Servo.h>
 
+
   //Configurações da Concha
+  int debugConcha = 0; // 0 Off / 1 ON
   Servo servoConcha;  // Chama a biblioteca para controle do servo da Concha
   int valorPotConcha; //Potenciometro da concha
   int pinoPotConcha = A0; // Porta Potenciometro da concha
@@ -12,6 +14,7 @@
 
 
   //Configurações do braco
+  int debugBraco = 0; // 0 Off / 1 ON
   Servo servoBraco;  // Chama a biblioteca para controle do servo da Braco
   int valorPotBraco; //Potenciometro da Braco
   int pinoPotBraco = A1; // Porta Potenciometro do braco
@@ -23,6 +26,7 @@
 
 
   //Configurações Conjunto articulado
+  int debugConj = 0; // 0 Off / 1 ON
   Servo servoConj;  // Chama a biblioteca para controle do servo da Conjunto articulado
   int valorPotConj; //Potenciometro da Conjunto articulado
   int pinoPotConj = A2; // Porta Potenciometro do Conjunto articulado
@@ -34,6 +38,7 @@
 
 
   //Configurações Rotacao da maquina
+  int debugRotMaquina = 0; // 0 Off / 1 ON
   Servo servoRotMaquina;  // Chama a biblioteca para controle do servo da Rotacao da maquina
   int valorPotRotMaquina; //Potenciometro da Rotacao da maquina
   int pinoPotRotMaquina = A3; // Porta Potenciometro do Rotacao da maquina
@@ -44,14 +49,15 @@
   int posicaoMinimaRotMaquina = 30; // Valor em graus para posicao maxima do Rotacao da maquina
 
 
-  //Configurações Esteira Direita/Esquerda
+  //Configurações Esteira Movimento
+  int debugMovimento = 1; // 0 Off / 1 ON
   Servo servoEstDir;  // Chama a biblioteca para controle do servo da Esteira Direita
   Servo servoEstEsq;  // Chama a biblioteca para controle do servo da Esteira Esquerda
+  float posicaoEstDir;
+  float posicaoEstEsq;
   int valorPotEstDirEsq; //Potenciometro da Esteira Direita/Esquerda
+  float valorPotFrenteRe; //Potenciometro da Esteira Frente/Re
   int pinoPotEstDirEsq = A4; // Porta Potenciometro da Esteira Direita/Esquerda
-
-  //Configurações Esteira Frente/Re
-  int valorPotFrenteRe; //Potenciometro da Esteira Frente/Re
   int pinoPotFrenteRe = A5; // Porta Potenciometro da Esteira Frente/Re
 
 
@@ -68,6 +74,14 @@ void setup() {
 }
 
 void loop() {
+  
+  controleConcha();
+  controleBraco();
+  controleMovimento();
+
+}
+
+void controleConcha(){
   //------ Inicio Controle da Concha ---------------
   valorPotConcha = analogRead(pinoPotConcha);
   if(valorPotConcha > 510){
@@ -80,10 +94,10 @@ void loop() {
       acrescimoConcha = 1;
     }else if(valorPotConcha > 600){
       acrescimoConcha = 0.5;
-
     }else{
       acrescimoConcha = 0.1;
     }
+
     posicaoConcha = posicaoConcha + acrescimoConcha;
     if(posicaoConcha > posicaoMaximaConcha){
       posicaoConcha = posicaoMaximaConcha;
@@ -94,9 +108,11 @@ void loop() {
     if(posicaoConchaAntiga != posicaoConcha){
       servoConcha.write(posicaoConcha); //Aplica a posição da concha em graus
       delay(10); 
-      Serial.print("Posição da Concha: ");
-      Serial.print(posicaoConcha);
-      Serial.println(" Graus");
+      if(debugConcha == 1){
+        Serial.print("Posição da Concha: ");
+        Serial.print(posicaoConcha);
+        Serial.println(" Graus");
+      }
     }
   }
 
@@ -112,6 +128,7 @@ void loop() {
     }else{
       acrescimoConcha = 0.1;
     }
+
     posicaoConcha = posicaoConcha - acrescimoConcha;
     if(posicaoConcha < 0){
       posicaoConcha = 0;
@@ -119,14 +136,18 @@ void loop() {
     if(posicaoConchaAntiga != posicaoConcha){
       servoConcha.write(posicaoConcha); //Aplica a posição da concha em graus
       delay(10); 
-      Serial.print("Posição da Concha: ");
-      Serial.print(posicaoConcha);
-      Serial.println(" Graus");
+      if(debugConcha == 1){
+        Serial.print("Posição da Concha: ");
+        Serial.print(posicaoConcha);
+        Serial.println(" Graus");
+      }
     }
   }
-  
+  return; 
   //------ FIM Controle da Concha ---------------
+}
 
+void controleBraco(){
   //------ Inicio Controle da Braco ---------------
   valorPotBraco = analogRead(pinoPotBraco);
   if(valorPotBraco > 510){
@@ -142,6 +163,7 @@ void loop() {
     }else{
       acrescimoBraco = 0.1;
     }
+
     posicaoBraco = posicaoBraco + acrescimoBraco;
     if(posicaoBraco > 180){
       posicaoBraco = 180;
@@ -149,9 +171,11 @@ void loop() {
     if(posicaoBracoAntiga != posicaoBraco){
       servoBraco.write(posicaoBraco); //Aplica a posição da Braco em graus
       delay(10); 
-      Serial.print("Posição da Braço: ");
-      Serial.print(posicaoBraco);
-      Serial.println(" Graus");
+      if(debugBraco == 1){
+        Serial.print("Posição da Braço: ");
+        Serial.print(posicaoBraco);
+        Serial.println(" Graus");
+      }
     }
   }
 
@@ -167,6 +191,7 @@ void loop() {
     }else{
       acrescimoBraco = 0.1;
     }
+
     posicaoBraco = posicaoBraco - acrescimoBraco;
     if(posicaoBraco < 0){
       posicaoBraco = 0;
@@ -174,16 +199,69 @@ void loop() {
     if(posicaoBracoAntiga != posicaoBraco){
       servoBraco.write(posicaoBraco); //Aplica a posição da Braco em graus
       delay(10); 
-      Serial.print("Posição da Braço: ");
-      Serial.print(posicaoBraco);
-      Serial.println(" Graus");
+      if(debugBraco == 1){
+        Serial.print("Posição da Braço: ");
+        Serial.print(posicaoBraco);
+        Serial.println(" Graus");
+      }
     }
   }
+  return;
   //------ Fim Controle da Braco ---------------
+}
 
-
+void controleMovimento(){
   //------ Fim Controle Movimento ---------------
-  servoEstDir.write(valorPotEstDirEsq); //Aplica a posição da Braco em graus
+    
+    valorPotFrenteRe = analogRead(pinoPotFrenteRe); 
+    //Serial.println(valorPotFrenteRe);
+    delay(200); 
+    if(valorPotFrenteRe > 490 && valorPotFrenteRe < 520){ // Confirma se esta parado para virar parado
+      //Controla virar parado
+      valorPotEstDirEsq = analogRead(pinoPotEstDirEsq);
+      if(valorPotEstDirEsq > 550){
+        int valorAceleracao = map(valorPotEstDirEsq, 0, 1023, 0, 180);
+        Serial.println(valorAceleracao);
+        servoEstDir.write(valorAceleracao); //Acelera com valor em graus
+        servoEstEsq.write(valorAceleracao); //Acelera com valor em graus
+        //delay(10); 
+      }else if(valorPotEstDirEsq < 450){
+        int valorAceleracao = map(valorPotEstDirEsq, 0, 1023, 0, 180);
+        servoEstDir.write(valorAceleracao); //Acelera com valor em graus
+        servoEstEsq.write(valorAceleracao); //Acelera com valor em graus
+        //delay(10); 
+      }else{
+        servoEstDir.write(93); // Para o movimento
+        servoEstEsq.write(93); // Para o movimento
+      }
+      if(debugMovimento == 1){
+        //Serial.println(valorPotEstDirEsq);  
+      }
+    }
+    else{ //Controla Frente e ré e virar andando
+      if(valorPotFrenteRe > 600){
+        int valorAceleracao = map(valorPotFrenteRe, 0, 1023, 0, 180);
+        int diferenca = valorAceleracao - 90;
+        int valorAceleracaoDir = 90 - diferenca;
+        servoEstDir.write(valorAceleracaoDir); //Acelera com valor em graus
+        servoEstEsq.write(valorAceleracao); //Acelera com valor em graus
+        //delay(10); 
+      }else if(valorPotFrenteRe < 400){
+        int valorAceleracao = map(valorPotFrenteRe, 0, 1023, 0, 180);
+        int diferenca = 90 - valorAceleracao;
+        int valorAceleracaoDir = 90 + diferenca;
+        servoEstDir.write(valorAceleracaoDir); //Acelera com valor em graus
+        servoEstEsq.write(valorAceleracao); //Acelera com valor em graus
+        //delay(10); 
+      }else{
+        servoEstDir.write(93); // Para o movimento
+        servoEstEsq.write(93); // Para o movimento
+      }
+      if(debugMovimento == 1){
+        Serial.println(valorPotFrenteRe);  
+      }
+    }
+    //Controla virar parado
+    return;
   //------ Fim Controle Movimento ---------------
-  
 }
