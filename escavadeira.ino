@@ -3,7 +3,7 @@
   int debugConcha = 0; // 0 Off / 1 ON
   int debugBraco = 0; // 0 Off / 1 ON
   int debugConj = 0; // 0 Off / 1 ON
-  int debugRotMaquina = 0; // 0 Off / 1 ON
+  int debugRotMaquina = 1; // 0 Off / 1 ON
   int debugMovimento = 0; // 0 Off / 1 ON
 
   //Configurações de demonstração
@@ -49,8 +49,8 @@
   float posicaoRotMaquina = 90; // Posição da Rotacao da maquina ao ligar
   float posicaoRotMaquinaAntiga = posicaoRotMaquina;
   float acrescimoRotMaquina = 0; // Acrescimo da Rotacao da maquina exponencial ao valor do potenciometro
-  int posicaoMaximaRotMaquina = 138; // Valor em graus para posicao maxima do Rotacao da maquina
-  int posicaoMinimaRotMaquina = 30; // Valor em graus para posicao maxima do Rotacao da maquina
+  int posicaoMaximaRotMaquina = 180; // Valor em graus para posicao maxima do Rotacao da maquina
+  int posicaoMinimaRotMaquina = 0; // Valor em graus para posicao maxima do Rotacao da maquina
 
 
   //Configurações Esteira Movimento
@@ -82,6 +82,7 @@ void loop() {
   //controleConcha();
   //controleBraco();
   //controleConj();
+  controleRotMaquina();
   //controleMovimento();
 
   //Verifica se foi iniciado o modo demonstração
@@ -309,7 +310,7 @@ void controleConj(){
       servoConj.write(posicaoConj); //Aplica a posição da Conj em graus
       delay(10); 
       if(debugConj == 1){
-        Serial.print("Posição da Braço: ");
+        Serial.print("do Conjuto Articulado: ");
         Serial.print(posicaoConj);
         Serial.println(" Graus");
       }
@@ -337,7 +338,7 @@ void controleConj(){
       servoConj.write(posicaoConj); //Aplica a posição da Conj em graus
       delay(10); 
       if(debugConj == 1){
-        Serial.print("Posição da Braço: ");
+        Serial.print("Posição do Conjuto Articulado: ");
         Serial.print(posicaoConj);
         Serial.println(" Graus");
       }
@@ -345,6 +346,69 @@ void controleConj(){
   }
   return;
   //------ Fim Controle da Conj ---------------
+}
+
+void controleRotMaquina(){
+  //------ Inicio Controle da RotMaquina ---------------
+  valorPotRotMaquina = analogRead(pinoPotRotMaquina);
+  if(valorPotRotMaquina > 550){
+    if(valorPotRotMaquina > 1000){
+      acrescimoRotMaquina = 8;
+    }else 
+    if(valorPotRotMaquina > 900){
+       acrescimoRotMaquina = 1.5;
+    }else if(valorPotRotMaquina > 700){
+      acrescimoRotMaquina = 1;
+    }else if(valorPotRotMaquina > 600){
+      acrescimoRotMaquina = 0.5;
+    }else{
+      acrescimoRotMaquina = 0.1;
+    }
+
+    posicaoRotMaquina = posicaoRotMaquina + acrescimoRotMaquina;
+    if(posicaoRotMaquina > posicaoMaximaRotMaquina){
+      posicaoRotMaquina = posicaoMaximaRotMaquina;
+    }
+    if(posicaoRotMaquinaAntiga != posicaoRotMaquina){
+      servoRotMaquina.write(posicaoRotMaquina); //Aplica a posição da RotMaquina em graus
+      delay(10); 
+      if(debugRotMaquina == 1){
+        Serial.print("Valor Potenciometro Rotacao Maquina: ");
+        Serial.print(valorPotRotMaquina);
+        Serial.println("");
+      }
+    }
+  }
+
+  if(valorPotRotMaquina < 480){
+    if(valorPotRotMaquina < 25){
+      acrescimoRotMaquina = 8;
+    }else if(valorPotRotMaquina < 100){
+      acrescimoRotMaquina = 1.5;
+    }else if(valorPotRotMaquina < 300){
+      acrescimoRotMaquina = 1;
+    }else if(valorPotRotMaquina < 400){
+      acrescimoRotMaquina = 0.5;
+    }else{
+      acrescimoRotMaquina = 0.1;
+    }
+
+    posicaoRotMaquina = posicaoRotMaquina - acrescimoRotMaquina;
+    if(posicaoRotMaquina < posicaoMinimaRotMaquina){
+      posicaoRotMaquina = posicaoMinimaRotMaquina;
+    }
+    if(posicaoRotMaquinaAntiga != posicaoRotMaquina){
+      servoRotMaquina.write(posicaoRotMaquina); //Aplica a posição da RotMaquina em graus
+      delay(10); 
+      if(debugRotMaquina == 1){
+        Serial.print("Valor Potenciometro Rotacao Maquina: ");
+        Serial.print(valorPotRotMaquina);
+        Serial.println("");
+      }
+    }
+  }
+  return;
+  //------ Fim Controle da RotMaquina ---------------
 }
 
 void controleMovimento(){
