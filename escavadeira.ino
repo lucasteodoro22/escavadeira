@@ -1,16 +1,18 @@
 #include <Servo.h>
 
+  //Configurações de demonstração
+  const int pinoDemonstracao = 13; //Botao para iniciar a demonstração
 
   //Configurações da Concha
-  int debugConcha = 0; // 0 Off / 1 ON
+  int debugConcha = 1; // 0 Off / 1 ON
   Servo servoConcha;  // Chama a biblioteca para controle do servo da Concha
   int valorPotConcha; //Potenciometro da concha
   int pinoPotConcha = A0; // Porta Potenciometro da concha
-  float posicaoConcha = 90; // Posição da concha ao ligar
+  float posicaoConcha = 100; // Posição da concha ao ligar
   float posicaoConchaAntiga = posicaoConcha;
   float acrescimoConcha = 0; // Acrescimo da concha exponencial ao valor do potenciometro
-  int posicaoMaximaConcha = 138; // Valor em graus para posicao maxima da concha
-  int posicaoMinimaConcha = 30; // Valor em graus para posicao maxima da concha
+  int posicaoMaximaConcha = 150; // Valor em graus para posicao maxima da concha
+  int posicaoMinimaConcha = 45; // Valor em graus para posicao maxima da concha
 
 
   //Configurações do braco
@@ -26,15 +28,15 @@
 
 
   //Configurações Conjunto articulado
-  int debugConj = 0; // 0 Off / 1 ON
+  int debugConj = 1; // 0 Off / 1 ON
   Servo servoConj;  // Chama a biblioteca para controle do servo da Conjunto articulado
   int valorPotConj; //Potenciometro da Conjunto articulado
   int pinoPotConj = A2; // Porta Potenciometro do Conjunto articulado
   float posicaoConj = 90; // Posição da Conjunto articulado ao ligar
   float posicaoConjAntiga = posicaoConj;
   float acrescimoConj = 0; // Acrescimo da Conjunto articulado exponencial ao valor do potenciometro
-  int posicaoMaximaConj = 138; // Valor em graus para posicao maxima do Conjunto articulado
-  int posicaoMinimaConj = 30; // Valor em graus para posicao maxima do Conjunto articulado
+  int posicaoMaximaConj = 150; // Valor em graus para posicao maxima do Conjunto articulado
+  int posicaoMinimaConj = 13; // Valor em graus para posicao maxima do Conjunto articulado
 
 
   //Configurações Rotacao da maquina
@@ -50,7 +52,7 @@
 
 
   //Configurações Esteira Movimento
-  int debugMovimento = 1; // 0 Off / 1 ON
+  int debugMovimento = 0; // 0 Off / 1 ON
   Servo servoEstDir;  // Chama a biblioteca para controle do servo da Esteira Direita
   Servo servoEstEsq;  // Chama a biblioteca para controle do servo da Esteira Esquerda
   float posicaoEstDir;
@@ -65,6 +67,7 @@
 
 void setup() {
   Serial.begin(9600);
+  pinMode(pinoDemonstracao, INPUT); // Define o pino do botão para demonstração
   servoConcha.attach(11);  //Pino PWM que manda sinal para o servo da Concha
   servoBraco.attach(10);  //Pino PWM que manda sinal para o servo do Braco
   servoConj.attach(9);  //Pino PWM que manda sinal para o servo do Conjunto articulado
@@ -75,10 +78,81 @@ void setup() {
 
 void loop() {
   
-  controleConcha();
-  controleBraco();
-  controleMovimento();
+  //controleConcha();
+  //controleBraco();
+  //controleConj();
+  //controleMovimento();
 
+  //Verifica se foi iniciado o modo demonstração
+  if(digitalRead(pinoDemonstracao) == HIGH){
+    //demonstracao();
+  }
+}
+
+void demonstracao(){
+  delay(2000);
+  //Abre tudo
+  int servoConjPosicao = servoConj.read();
+  for (int i = 1; i <= 180; i++) {
+    servoConjPosicao++;
+    if(servoConjPosicao > posicaoMaximaConj){
+      break;
+    }
+    servoConj.write(servoConjPosicao); //Aplica a posição da concha em graus
+    delay(15);
+  }
+
+  int servoBracoPosicao = servoBraco.read();
+  for (int i = 1; i <= 180; i++) {
+    servoBracoPosicao++;
+    if(servoBracoPosicao > posicaoMaximaBraco){
+      break;
+    }
+    servoBraco.write(servoBracoPosicao); //Aplica a posição da concha em graus
+    delay(15);
+  }
+
+  int servoConchaPosicao = servoConcha.read();
+  for (int i = 1; i <= 180; i++) {
+    servoConchaPosicao++;
+    if(servoConchaPosicao > posicaoMaximaConcha){
+      break;
+    }
+    servoConcha.write(servoConchaPosicao); //Aplica a posição da concha em graus
+    delay(15);
+  }
+
+  //Fecha tudo
+
+  for (int i = 1; i <= 180; i++) {
+    servoConchaPosicao--;
+    if(servoConchaPosicao < posicaoMinimaConcha){
+      break;
+    }
+    servoConcha.write(servoConchaPosicao); //Aplica a posição da concha em graus
+    delay(15);
+  }
+
+  for (int i = 1; i <= 180; i++) {
+    servoBracoPosicao--;
+    if(servoBracoPosicao < posicaoMinimaBraco){
+      break;
+    }
+    servoBraco.write(servoBracoPosicao); //Aplica a posição da concha em graus
+    delay(15);
+  }
+
+  for (int i = 1; i <= 180; i++) {
+    servoConjPosicao--;
+    if(servoConjPosicao < 80){
+      break;
+    }
+    servoConj.write(servoConjPosicao); //Aplica a posição da concha em graus
+    delay(15);
+  }
+  Serial.println("Demonstracao Finalizada");
+  delay(5000);
+  return;
 }
 
 void controleConcha(){
@@ -130,8 +204,8 @@ void controleConcha(){
     }
 
     posicaoConcha = posicaoConcha - acrescimoConcha;
-    if(posicaoConcha < 0){
-      posicaoConcha = 0;
+    if(posicaoConcha < posicaoMinimaConcha){
+      posicaoConcha = posicaoMinimaConcha;
     }
     if(posicaoConchaAntiga != posicaoConcha){
       servoConcha.write(posicaoConcha); //Aplica a posição da concha em graus
@@ -198,7 +272,6 @@ void controleBraco(){
     }
     if(posicaoBracoAntiga != posicaoBraco){
       servoBraco.write(posicaoBraco); //Aplica a posição da Braco em graus
-      delay(10); 
       if(debugBraco == 1){
         Serial.print("Posição da Braço: ");
         Serial.print(posicaoBraco);
@@ -208,6 +281,69 @@ void controleBraco(){
   }
   return;
   //------ Fim Controle da Braco ---------------
+}
+
+void controleConj(){
+  //------ Inicio Controle da Conj ---------------
+  valorPotConj = analogRead(pinoPotConj);
+  if(valorPotConj > 520){
+    if(valorPotConj > 1000){
+      acrescimoConj = 5;
+    }else 
+    if(valorPotConj > 900){
+       acrescimoConj = 1.5;
+    }else if(valorPotConj > 700){
+      acrescimoConj = 1;
+    }else if(valorPotConj > 600){
+      acrescimoConj = 0.5;
+    }else{
+      acrescimoConj = 0.1;
+    }
+
+    posicaoConj = posicaoConj + acrescimoConj;
+    if(posicaoConj > posicaoMaximaConj){
+      posicaoConj = posicaoMaximaConj;
+    }
+    if(posicaoConjAntiga != posicaoConj){
+      servoConj.write(posicaoConj); //Aplica a posição da Conj em graus
+      delay(10); 
+      if(debugConj == 1){
+        Serial.print("Posição da Braço: ");
+        Serial.print(posicaoConj);
+        Serial.println(" Graus");
+      }
+    }
+  }
+
+  if(valorPotConj < 500){
+    if(valorPotConj < 25){
+      acrescimoConj = 5;
+    }else if(valorPotConj < 100){
+      acrescimoConj = 1.5;
+    }else if(valorPotConj < 300){
+      acrescimoConj = 1;
+    }else if(valorPotConj < 400){
+      acrescimoConj = 0.5;
+    }else{
+      acrescimoConj = 0.1;
+    }
+
+    posicaoConj = posicaoConj - acrescimoConj;
+    if(posicaoConj < posicaoMinimaConj){
+      posicaoConj = posicaoMinimaConj;
+    }
+    if(posicaoConjAntiga != posicaoConj){
+      servoConj.write(posicaoConj); //Aplica a posição da Conj em graus
+      delay(10); 
+      if(debugConj == 1){
+        Serial.print("Posição da Braço: ");
+        Serial.print(posicaoConj);
+        Serial.println(" Graus");
+      }
+    }
+  }
+  return;
+  //------ Fim Controle da Conj ---------------
 }
 
 void controleMovimento(){
