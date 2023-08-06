@@ -1,10 +1,15 @@
 #include <Servo.h>
+  //Configurações para DEBUG
+  int debugConcha = 0; // 0 Off / 1 ON
+  int debugBraco = 0; // 0 Off / 1 ON
+  int debugConj = 0; // 0 Off / 1 ON
+  int debugRotMaquina = 0; // 0 Off / 1 ON
+  int debugMovimento = 0; // 0 Off / 1 ON
 
   //Configurações de demonstração
-  const int pinoDemonstracao = 13; //Botao para iniciar a demonstração
+  const int pinoDemonstracao = 13; // Pino digital botão para iniciar a demonstração
 
   //Configurações da Concha
-  int debugConcha = 1; // 0 Off / 1 ON
   Servo servoConcha;  // Chama a biblioteca para controle do servo da Concha
   int valorPotConcha; //Potenciometro da concha
   int pinoPotConcha = A0; // Porta Potenciometro da concha
@@ -16,7 +21,6 @@
 
 
   //Configurações do braco
-  int debugBraco = 0; // 0 Off / 1 ON
   Servo servoBraco;  // Chama a biblioteca para controle do servo da Braco
   int valorPotBraco; //Potenciometro da Braco
   int pinoPotBraco = A1; // Porta Potenciometro do braco
@@ -28,7 +32,6 @@
 
 
   //Configurações Conjunto articulado
-  int debugConj = 1; // 0 Off / 1 ON
   Servo servoConj;  // Chama a biblioteca para controle do servo da Conjunto articulado
   int valorPotConj; //Potenciometro da Conjunto articulado
   int pinoPotConj = A2; // Porta Potenciometro do Conjunto articulado
@@ -40,7 +43,6 @@
 
 
   //Configurações Rotacao da maquina
-  int debugRotMaquina = 0; // 0 Off / 1 ON
   Servo servoRotMaquina;  // Chama a biblioteca para controle do servo da Rotacao da maquina
   int valorPotRotMaquina; //Potenciometro da Rotacao da maquina
   int pinoPotRotMaquina = A3; // Porta Potenciometro do Rotacao da maquina
@@ -52,7 +54,6 @@
 
 
   //Configurações Esteira Movimento
-  int debugMovimento = 0; // 0 Off / 1 ON
   Servo servoEstDir;  // Chama a biblioteca para controle do servo da Esteira Direita
   Servo servoEstEsq;  // Chama a biblioteca para controle do servo da Esteira Esquerda
   float posicaoEstDir;
