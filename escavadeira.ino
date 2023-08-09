@@ -1,9 +1,21 @@
+#include <RF24.h>
+#include <RF24_config.h>
+#include <nRF24L01.h>
+#include <printf.h>
+#include <SPI.h>
 #include <Servo.h>
+#include <Arduino.h>
+#include <string.h>
+
+  //Configurações RF
+  RF24 radio(7, 8); // CE, CSN
+  const byte address[6] = "00001";
+
   //Configurações para DEBUG
   int debugConcha = 0; // 0 Off / 1 ON
   int debugBraco = 0; // 0 Off / 1 ON
-  int debugConj = 0; // 0 Off / 1 ON
-  int debugRotMaquina = 1; // 0 Off / 1 ON
+  int debugConj = 1; // 0 Off / 1 ON
+  int debugRotMaquina = 0; // 0 Off / 1 ON
   int debugMovimento = 0; // 0 Off / 1 ON
 
   //Configurações de demonstração
@@ -75,20 +87,49 @@ void setup() {
   servoRotMaquina.attach(6);  //Pino PWM que manda sinal para o servo da Rotação da maquina
   servoEstDir.attach(5);  //Pino PWM que manda sinal para o servo da Esteira Direita
   servoEstEsq.attach(3);  //Pino PWM que manda sinal para o servo da Esteira Esquerda
+
+  radio.begin();
+  radio.openReadingPipe(0, address);// Define a leitura de dados do RF
+  radio.setPALevel(RF24_PA_MIN);
+  radio.startListening();//Fica escutando se tem comandos vindo pelo RF
+
 }
 
 void loop() {
   
-  //controleConcha();
-  //controleBraco();
-  //controleConj();
-  controleRotMaquina();
-  //controleMovimento();
+  if (radio.available()) {
+    char dadosRecebidosRF[32] = "";
+    radio.read(&dadosRecebidosRF, sizeof(dadosRecebidosRF));
+    Serial.println(dadosRecebidosRF);
 
-  //Verifica se foi iniciado o modo demonstração
-  if(digitalRead(pinoDemonstracao) == HIGH){
-    //demonstracao();
+    char delimiter = '-';
+    String dadosFormatadosRF[10];
+    formataDadosRF(dadosRecebidosRF, delimiter, dadosFormatadosRF, 10);
+    if(dadosFormatadosRF[0] == "demonstracao"){ //Verifica se foi iniciado o modo demonstração
+      demonstracao();
+    }
+    if(dadosFormatadosRF[0] == "concha"){
+      Serial.println(dadosFormatadosRF[1]);
+      controleConcha();
+    }
+    if(dadosFormatadosRF[0] == "controleBraco"){
+      Serial.println(dadosFormatadosRF[1]);
+      controleBraco();
+    }
+    if(dadosFormatadosRF[0] == "controleConj"){
+      Serial.println(dadosFormatadosRF[1]);
+      controleConj();
+    }
+    if(dadosFormatadosRF[0] == "controleRotMaquina"){
+      Serial.println(dadosFormatadosRF[1]);
+      controleRotMaquina();
+    }
+    if(dadosFormatadosRF[0] == "controleMovimento"){
+      Serial.println(dadosFormatadosRF[1]);
+      controleMovimento();
+    }
   }
+  delay(1000);
 }
 
 void demonstracao(){
@@ -183,7 +224,6 @@ void controleConcha(){
     }
     if(posicaoConchaAntiga != posicaoConcha){
       servoConcha.write(posicaoConcha); //Aplica a posição da concha em graus
-      delay(10); 
       if(debugConcha == 1){
         Serial.print("Posição da Concha: ");
         Serial.print(posicaoConcha);
@@ -211,7 +251,6 @@ void controleConcha(){
     }
     if(posicaoConchaAntiga != posicaoConcha){
       servoConcha.write(posicaoConcha); //Aplica a posição da concha em graus
-      delay(10); 
       if(debugConcha == 1){
         Serial.print("Posição da Concha: ");
         Serial.print(posicaoConcha);
@@ -246,7 +285,6 @@ void controleBraco(){
     }
     if(posicaoBracoAntiga != posicaoBraco){
       servoBraco.write(posicaoBraco); //Aplica a posição da Braco em graus
-      delay(10); 
       if(debugBraco == 1){
         Serial.print("Posição da Braço: ");
         Serial.print(posicaoBraco);
@@ -308,9 +346,8 @@ void controleConj(){
     }
     if(posicaoConjAntiga != posicaoConj){
       servoConj.write(posicaoConj); //Aplica a posição da Conj em graus
-      delay(10); 
       if(debugConj == 1){
-        Serial.print("do Conjuto Articulado: ");
+        Serial.print("Posicao do Conjuto Articulado: ");
         Serial.print(posicaoConj);
         Serial.println(" Graus");
       }
@@ -336,7 +373,6 @@ void controleConj(){
     }
     if(posicaoConjAntiga != posicaoConj){
       servoConj.write(posicaoConj); //Aplica a posição da Conj em graus
-      delay(10); 
       if(debugConj == 1){
         Serial.print("Posição do Conjuto Articulado: ");
         Serial.print(posicaoConj);
@@ -371,7 +407,6 @@ void controleRotMaquina(){
     }
     if(posicaoRotMaquinaAntiga != posicaoRotMaquina){
       servoRotMaquina.write(posicaoRotMaquina); //Aplica a posição da RotMaquina em graus
-      delay(10); 
       if(debugRotMaquina == 1){
         Serial.print("Valor Potenciometro Rotacao Maquina: ");
         Serial.print(valorPotRotMaquina);
@@ -399,7 +434,6 @@ void controleRotMaquina(){
     }
     if(posicaoRotMaquinaAntiga != posicaoRotMaquina){
       servoRotMaquina.write(posicaoRotMaquina); //Aplica a posição da RotMaquina em graus
-      delay(10); 
       if(debugRotMaquina == 1){
         Serial.print("Valor Potenciometro Rotacao Maquina: ");
         Serial.print(valorPotRotMaquina);
@@ -412,11 +446,10 @@ void controleRotMaquina(){
 }
 
 void controleMovimento(){
-  //------ Fim Controle Movimento ---------------
+  //------ Inicio Controle Movimento ---------------
     
     valorPotFrenteRe = analogRead(pinoPotFrenteRe); 
     //Serial.println(valorPotFrenteRe);
-    delay(200); 
     if(valorPotFrenteRe > 490 && valorPotFrenteRe < 520){ // Confirma se esta parado para virar parado
       //Controla virar parado
       valorPotEstDirEsq = analogRead(pinoPotEstDirEsq);
@@ -465,4 +498,17 @@ void controleMovimento(){
     //Controla virar parado
     return;
   //------ Fim Controle Movimento ---------------
+}
+
+void formataDadosRF(const String &inputString, char delimiter, String *outputArray, int maxParts) {
+    int partIndex = 0;
+    int startIndex = 0;
+    int endIndex;
+
+    while (partIndex < maxParts - 1 && (endIndex = inputString.indexOf(delimiter, startIndex)) >= 0) {
+        outputArray[partIndex++] = inputString.substring(startIndex, endIndex);
+        startIndex = endIndex + 1;
+    }
+
+    outputArray[partIndex] = inputString.substring(startIndex);
 }
