@@ -353,7 +353,11 @@ void controleConj(int valorPotConj){
       posicaoConj = posicaoMaximaConj;
     }
     if(posicaoConjAntiga != posicaoConj){
-      servoConj.write(posicaoConj); //Aplica a posição da Conj em graus
+      //servoConj.write(posicaoConj); //Aplica a posição da Conj em graus
+       Wire.beginTransmission(8); // Endereço do ATtiny88 escravo por I2C
+      int posicaoViaI2C = posicaoConj * 100; // Converte o float para inteiro
+      Wire.write(posicaoViaI2C); //Aplica a posição da RotMaquina em graus
+      Wire.endTransmission();
       if(debugConj == 1){
         Serial.print("Posicao do Conjuto Articulado: ");
         Serial.print(posicaoConj);
@@ -380,7 +384,11 @@ void controleConj(int valorPotConj){
       posicaoConj = posicaoMinimaConj;
     }
     if(posicaoConjAntiga != posicaoConj){
-      servoConj.write(posicaoConj); //Aplica a posição da Conj em graus
+      //servoConj.write(posicaoConj); //Aplica a posição da Conj em graus
+       Wire.beginTransmission(8); // Endereço do ATtiny88 escravo por I2C
+      int posicaoViaI2C = posicaoConj * 100; // Converte o float para inteiro
+      Wire.write(posicaoViaI2C); //Aplica a posição da RotMaquina em graus
+      Wire.endTransmission();
       if(debugConj == 1){
         Serial.print("Posição do Conjuto Articulado: ");
         Serial.print(posicaoConj);
@@ -415,9 +423,10 @@ void controleRotMaquina(int valorPotRotMaquina){
     }
     if(posicaoRotMaquinaAntiga != posicaoRotMaquina){
       Wire.beginTransmission(8); // Endereço do ATtiny88 escravo por I2C
-      Wire.write(posicaoRotMaquina); //Aplica a posição da RotMaquina em graus
+      int posicaoViaI2C = posicaoRotMaquina * 100; // Converte o float para inteiro
+      Wire.write(posicaoViaI2C); //Aplica a posição da RotMaquina em graus
       Wire.endTransmission();
-      if(debugRotMaquina == 1){
+      if(debugRotMaquina == 12){
         Serial.print("Valor Potenciometro Rotacao Maquina: ");
         Serial.print(valorPotRotMaquina);
         Serial.println("");
