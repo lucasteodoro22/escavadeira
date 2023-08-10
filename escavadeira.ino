@@ -13,10 +13,10 @@
 
   //Configurações para DEBUG
   int debugConcha = 1; // 0 Off / 1 ON
-  int debugBraco = 0; // 0 Off / 1 ON
+  int debugBraco = 1; // 0 Off / 1 ON
   int debugConj = 1; // 0 Off / 1 ON
-  int debugRotMaquina = 0; // 0 Off / 1 ON
-  int debugMovimento = 0; // 0 Off / 1 ON
+  int debugRotMaquina = 1; // 0 Off / 1 ON
+  int debugMovimento = 1; // 0 Off / 1 ON
 
   //Configurações de demonstração
   const int pinoDemonstracao = 13; // Pino digital botão para iniciar a demonstração
@@ -81,9 +81,9 @@
 void setup() {
   Serial.begin(9600);
   pinMode(pinoDemonstracao, INPUT); // Define o pino do botão para demonstração
-  servoConcha.attach(11);  //Pino PWM que manda sinal para o servo da Concha
+  servoConcha.attach(9);  //Pino PWM que manda sinal para o servo da Concha
   servoBraco.attach(10);  //Pino PWM que manda sinal para o servo do Braco
-  servoConj.attach(9);  //Pino PWM que manda sinal para o servo do Conjunto articulado
+  servoConj.attach(11);  //Pino PWM que manda sinal para o servo do Conjunto articulado
   servoRotMaquina.attach(6);  //Pino PWM que manda sinal para o servo da Rotação da maquina
   servoEstDir.attach(5);  //Pino PWM que manda sinal para o servo da Esteira Direita
   servoEstEsq.attach(3);  //Pino PWM que manda sinal para o servo da Esteira Esquerda
@@ -98,36 +98,41 @@ void setup() {
 void loop() {
   
   if (radio.available()) {
-    char dadosRecebidosRF[32] = "";
+    char dadosRecebidosRF[15] = "";
     radio.read(&dadosRecebidosRF, sizeof(dadosRecebidosRF));
-    Serial.println(dadosRecebidosRF);
+    //Serial.println(dadosRecebidosRF);
 
-  //   char delimiter = '-';
-  //   String dadosFormatadosRF[10];
-  //   formataDadosRF(dadosRecebidosRF, delimiter, dadosFormatadosRF, 10);
-  //   if(dadosFormatadosRF[0] == "demonstracao"){ //Verifica se foi iniciado o modo demonstração
-  //     demonstracao();
-  //   }
-  //   if(dadosFormatadosRF[0] == "concha"){
-  //     Serial.println(dadosFormatadosRF[1]);
-  //     controleConcha();
-  //   }
-  //   if(dadosFormatadosRF[0] == "controleBraco"){
-  //     Serial.println(dadosFormatadosRF[1]);
-  //     controleBraco();
-  //   }
-  //   if(dadosFormatadosRF[0] == "controleConj"){
-  //     Serial.println(dadosFormatadosRF[1]);
-  //     controleConj();
-  //   }
-  //   if(dadosFormatadosRF[0] == "controleRotMaquina"){
-  //     Serial.println(dadosFormatadosRF[1]);
-  //     controleRotMaquina();
-  //   }
-  //   if(dadosFormatadosRF[0] == "controleMovimento"){
-  //     Serial.println(dadosFormatadosRF[1]);
-  //     controleMovimento();
-  //   }
+    char delimiter = '-';
+    String dadosFormatadosRF[10];
+    formataDadosRF(dadosRecebidosRF, delimiter, dadosFormatadosRF, 10);
+    if(dadosFormatadosRF[1] == "demonstracao"){ //Verifica se foi iniciado o modo demonstração
+      demonstracao();
+    }
+    if(dadosFormatadosRF[1] == "1"){
+      //Serial.println(dadosFormatadosRF[0]);
+      int valor = dadosFormatadosRF[0].toInt();
+      controleConcha(valor);
+    }
+    if(dadosFormatadosRF[1] == "2"){
+      //Serial.println(dadosFormatadosRF[0]);
+      int valor = dadosFormatadosRF[0].toInt();
+      controleBraco(valor);
+    }
+    if(dadosFormatadosRF[1] == "3"){
+      //Serial.println(dadosFormatadosRF[0]);
+      int valor = dadosFormatadosRF[0].toInt();
+      controleConj(valor);
+    }
+    if(dadosFormatadosRF[1] == "4"){
+      //Serial.println(dadosFormatadosRF[0]);
+      int valor = dadosFormatadosRF[0].toInt();
+      controleRotMaquina(valor);
+    }
+    if(dadosFormatadosRF[1] == "5"){
+      //Serial.println(dadosFormatadosRF[0]);
+      int valor = dadosFormatadosRF[0].toInt();
+      controleMovimento(valor);
+    }
   }
    delay(10);
 }
@@ -198,9 +203,9 @@ void demonstracao(){
   return;
 }
 
-void controleConcha(){
+void controleConcha(int valorPotConcha){
   //------ Inicio Controle da Concha ---------------
-  valorPotConcha = analogRead(pinoPotConcha);
+  //valorPotConcha = analogRead(pinoPotConcha);
   if(valorPotConcha > 510){
     if(valorPotConcha > 1000){
       acrescimoConcha = 5;
@@ -262,9 +267,9 @@ void controleConcha(){
   //------ FIM Controle da Concha ---------------
 }
 
-void controleBraco(){
+void controleBraco(int valorPotBraco){
   //------ Inicio Controle da Braco ---------------
-  valorPotBraco = analogRead(pinoPotBraco);
+  //valorPotBraco = analogRead(pinoPotBraco);
   if(valorPotBraco > 510){
     if(valorPotBraco > 1000){
       acrescimoBraco = 5;
@@ -323,9 +328,9 @@ void controleBraco(){
   //------ Fim Controle da Braco ---------------
 }
 
-void controleConj(){
+void controleConj(int valorPotConj){
   //------ Inicio Controle da Conj ---------------
-  valorPotConj = analogRead(pinoPotConj);
+  //valorPotConj = analogRead(pinoPotConj);
   if(valorPotConj > 520){
     if(valorPotConj > 1000){
       acrescimoConj = 5;
@@ -384,9 +389,9 @@ void controleConj(){
   //------ Fim Controle da Conj ---------------
 }
 
-void controleRotMaquina(){
+void controleRotMaquina(int valorPotRotMaquina){
   //------ Inicio Controle da RotMaquina ---------------
-  valorPotRotMaquina = analogRead(pinoPotRotMaquina);
+  //valorPotRotMaquina = analogRead(pinoPotRotMaquina);
   if(valorPotRotMaquina > 550){
     if(valorPotRotMaquina > 1000){
       acrescimoRotMaquina = 8;
@@ -445,10 +450,10 @@ void controleRotMaquina(){
   //------ Fim Controle da RotMaquina ---------------
 }
 
-void controleMovimento(){
+void controleMovimento(int valorPotFrenteRe){
   //------ Inicio Controle Movimento ---------------
     
-    valorPotFrenteRe = analogRead(pinoPotFrenteRe); 
+    //valorPotFrenteRe = analogRead(pinoPotFrenteRe); 
     //Serial.println(valorPotFrenteRe);
     if(valorPotFrenteRe > 490 && valorPotFrenteRe < 520){ // Confirma se esta parado para virar parado
       //Controla virar parado
