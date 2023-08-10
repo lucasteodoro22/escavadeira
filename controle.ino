@@ -34,42 +34,43 @@ void loop(){
   if(valorConcha > 520 || valorConcha < 500){
     char text[10];
     itoa(valorConcha, text, 10);
-    strcat(text, "concha-");
+    strcat(text, "-1");
     radio.write(&text, sizeof(text));
   }
+  
   uint16_t valorBraco = ADC_Read(analogBraco); 
   if(valorBraco > 520 || valorBraco < 500){
     char text[10];
     itoa(valorBraco, text, 10);
-    strcat(text, "braco-");
+    strcat(text, "-2");
     radio.write(&text, sizeof(text));
   }
   uint16_t valorConj = ADC_Read(analogConj); 
   if(valorConj > 520 || valorConj < 500){
     char text[10];
     itoa(valorConj, text, 10);
-    strcat(text, "conj-");
+    strcat(text, "-3");
     radio.write(&text, sizeof(text));
   }
   uint16_t valorRotMaquina = ADC_Read(analogRotMaquina); 
   if(valorRotMaquina > 520 || valorRotMaquina < 500){
     char text[10];
     itoa(valorRotMaquina, text, 10);
-    strcat(text, "rotmaq-");
+    strcat(text, "-4");
     radio.write(&text, sizeof(text));
   }
   uint16_t valorMovimento = ADC_Read(analogMovimento); 
   if(valorMovimento > 520 || valorMovimento < 500){
     char text[10];
     itoa(valorMovimento, text, 10);
-    strcat(text, "movimento-");
+    strcat(text, "-5");
     radio.write(&text, sizeof(text));
   }  
   uint16_t valorDirEsq = ADC_Read(analogDirEsq); 
   if(valorDirEsq > 520 || valorDirEsq < 500){
     char text[10];
     itoa(valorDirEsq, text, 10);
-    strcat(text, "diresq-");
+    strcat(text, "-6");
     radio.write(&text, sizeof(text));
   }  
      
