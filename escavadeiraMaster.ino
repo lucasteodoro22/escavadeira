@@ -6,6 +6,7 @@
 #include <Servo.h>
 #include <Arduino.h>
 #include <string.h>
+#include <Wire.h>
 
   //Configurações RF
   RF24 radio(7, 8); // CE, CSN
@@ -83,8 +84,8 @@ void setup() {
   pinMode(pinoDemonstracao, INPUT); // Define o pino do botão para demonstração
   servoConcha.attach(9);  //Pino PWM que manda sinal para o servo da Concha
   servoBraco.attach(10);  //Pino PWM que manda sinal para o servo do Braco
-  servoConj.attach(11);  //Pino PWM que manda sinal para o servo do Conjunto articulado
-  servoRotMaquina.attach(6);  //Pino PWM que manda sinal para o servo da Rotação da maquina
+  servoConj.attach(6);  //Pino PWM que manda sinal para o servo do Conjunto articulado
+  //servoRotMaquina.attach(11);  //Pino PWM que manda sinal para o servo da Rotação da maquina || Vai ser usado um escravo Attiny88 pois esse pino 11 é usado pelo RF24
   servoEstDir.attach(5);  //Pino PWM que manda sinal para o servo da Esteira Direita
   servoEstEsq.attach(3);  //Pino PWM que manda sinal para o servo da Esteira Esquerda
 
@@ -92,6 +93,8 @@ void setup() {
   radio.openReadingPipe(0, address);// Define a leitura de dados do RF
   radio.setPALevel(RF24_PA_MIN);
   radio.startListening();//Fica escutando se tem comandos vindo pelo RF
+
+  Wire.begin(); // Inicializa a biblioteca Wire (I2C)
 
 }
 
@@ -411,7 +414,9 @@ void controleRotMaquina(int valorPotRotMaquina){
       posicaoRotMaquina = posicaoMaximaRotMaquina;
     }
     if(posicaoRotMaquinaAntiga != posicaoRotMaquina){
-      servoRotMaquina.write(posicaoRotMaquina); //Aplica a posição da RotMaquina em graus
+      Wire.beginTransmission(8); // Endereço do ATtiny88 escravo por I2C
+      Wire.write(posicaoRotMaquina); //Aplica a posição da RotMaquina em graus
+      Wire.endTransmission();
       if(debugRotMaquina == 1){
         Serial.print("Valor Potenciometro Rotacao Maquina: ");
         Serial.print(valorPotRotMaquina);
