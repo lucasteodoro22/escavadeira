@@ -12,7 +12,7 @@
   const byte address[6] = "00001";
 
   //Configurações para DEBUG
-  int debugConcha = 0; // 0 Off / 1 ON
+  int debugConcha = 1; // 0 Off / 1 ON
   int debugBraco = 0; // 0 Off / 1 ON
   int debugConj = 1; // 0 Off / 1 ON
   int debugRotMaquina = 0; // 0 Off / 1 ON
@@ -102,34 +102,34 @@ void loop() {
     radio.read(&dadosRecebidosRF, sizeof(dadosRecebidosRF));
     Serial.println(dadosRecebidosRF);
 
-    char delimiter = '-';
-    String dadosFormatadosRF[10];
-    formataDadosRF(dadosRecebidosRF, delimiter, dadosFormatadosRF, 10);
-    if(dadosFormatadosRF[0] == "demonstracao"){ //Verifica se foi iniciado o modo demonstração
-      demonstracao();
-    }
-    if(dadosFormatadosRF[0] == "concha"){
-      Serial.println(dadosFormatadosRF[1]);
-      controleConcha();
-    }
-    if(dadosFormatadosRF[0] == "controleBraco"){
-      Serial.println(dadosFormatadosRF[1]);
-      controleBraco();
-    }
-    if(dadosFormatadosRF[0] == "controleConj"){
-      Serial.println(dadosFormatadosRF[1]);
-      controleConj();
-    }
-    if(dadosFormatadosRF[0] == "controleRotMaquina"){
-      Serial.println(dadosFormatadosRF[1]);
-      controleRotMaquina();
-    }
-    if(dadosFormatadosRF[0] == "controleMovimento"){
-      Serial.println(dadosFormatadosRF[1]);
-      controleMovimento();
-    }
+  //   char delimiter = '-';
+  //   String dadosFormatadosRF[10];
+  //   formataDadosRF(dadosRecebidosRF, delimiter, dadosFormatadosRF, 10);
+  //   if(dadosFormatadosRF[0] == "demonstracao"){ //Verifica se foi iniciado o modo demonstração
+  //     demonstracao();
+  //   }
+  //   if(dadosFormatadosRF[0] == "concha"){
+  //     Serial.println(dadosFormatadosRF[1]);
+  //     controleConcha();
+  //   }
+  //   if(dadosFormatadosRF[0] == "controleBraco"){
+  //     Serial.println(dadosFormatadosRF[1]);
+  //     controleBraco();
+  //   }
+  //   if(dadosFormatadosRF[0] == "controleConj"){
+  //     Serial.println(dadosFormatadosRF[1]);
+  //     controleConj();
+  //   }
+  //   if(dadosFormatadosRF[0] == "controleRotMaquina"){
+  //     Serial.println(dadosFormatadosRF[1]);
+  //     controleRotMaquina();
+  //   }
+  //   if(dadosFormatadosRF[0] == "controleMovimento"){
+  //     Serial.println(dadosFormatadosRF[1]);
+  //     controleMovimento();
+  //   }
   }
-  delay(1000);
+   delay(10);
 }
 
 void demonstracao(){
