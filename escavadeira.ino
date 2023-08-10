@@ -28,8 +28,8 @@
   float posicaoConcha = 100; // Posição da concha ao ligar
   float posicaoConchaAntiga = posicaoConcha;
   float acrescimoConcha = 0; // Acrescimo da concha exponencial ao valor do potenciometro
-  int posicaoMaximaConcha = 150; // Valor em graus para posicao maxima da concha
-  int posicaoMinimaConcha = 45; // Valor em graus para posicao maxima da concha
+  int posicaoMaximaConcha = 160; // Valor em graus para posicao maxima da concha
+  int posicaoMinimaConcha = 47; // Valor em graus para posicao maxima da concha
 
 
   //Configurações do braco
@@ -40,7 +40,7 @@
   float posicaoBracoAntiga = posicaoBraco;
   float acrescimoBraco = 0; // Acrescimo da Braco exponencial ao valor do potenciometro
   int posicaoMaximaBraco = 138; // Valor em graus para posicao maxima do braco
-  int posicaoMinimaBraco = 30; // Valor em graus para posicao maxima do braco
+  int posicaoMinimaBraco = 31; // Valor em graus para posicao maxima do braco
 
 
   //Configurações Conjunto articulado
@@ -100,7 +100,7 @@ void loop() {
   if (radio.available()) {
     char dadosRecebidosRF[15] = "";
     radio.read(&dadosRecebidosRF, sizeof(dadosRecebidosRF));
-    //Serial.println(dadosRecebidosRF);
+    Serial.println(dadosRecebidosRF);
 
     char delimiter = '-';
     String dadosFormatadosRF[10];
@@ -312,8 +312,8 @@ void controleBraco(int valorPotBraco){
     }
 
     posicaoBraco = posicaoBraco - acrescimoBraco;
-    if(posicaoBraco < 0){
-      posicaoBraco = 0;
+    if(posicaoBraco < posicaoMinimaBraco){
+      posicaoBraco = posicaoMinimaBraco;
     }
     if(posicaoBracoAntiga != posicaoBraco){
       servoBraco.write(posicaoBraco); //Aplica a posição da Braco em graus
