@@ -11,8 +11,8 @@ RF24 radio(CE_PIN, CSN_PIN);
 const byte address[6] = "00001"; // Define o ID do slave
 
 int analogConcha = 5; // Define o pino para controle da Concha
-int analogBraco = 4; // Define o pino para controle da Braco
-int analogConj = 3; // Define o pino para controle da Conj
+int analogBraco = 3; // Define o pino para controle da Braco
+int analogConj = 4; // Define o pino para controle da Conj
 int analogRotMaquina = 2; // Define o pino para controle da RotMaquina
 int analogMovimento = 1; // Define o pino para controle da Movimento
 int analogDirEsq = 0; // Define o pino para controle da DirEsq
