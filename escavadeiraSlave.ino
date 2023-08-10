@@ -11,12 +11,14 @@ void setup() {
 
 void loop() {
   // O loop do ATtiny88 pode ser vazio, já que a função onReceive será chamada quando os dados forem recebidos
+
 }
 
 void receiveEvent(int byteCount) {
   while (Wire.available()) {
     int pwmValue = Wire.read(); // Lê o valor PWM recebido
-    int servoPosition = map(pwmValue, 0, 255, 0, 180); // Mapeia o valor PWM para uma posição do servo (0-180 graus)
+    float floatValue = pwmValue / 100; // Converte o valor inteiro para float
+    int servoPosition = map(floatValue, 0, 255, 0, 180); // Mapeia o valor PWM para uma posição do servo (0-180 graus)
     myServo.write(servoPosition); // Define a posição do servo
   }
 }
