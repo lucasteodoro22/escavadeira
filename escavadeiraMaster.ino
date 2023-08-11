@@ -29,8 +29,8 @@
   float posicaoConcha = 100; // Posição da concha ao ligar
   float posicaoConchaAntiga = posicaoConcha;
   float acrescimoConcha = 0; // Acrescimo da concha exponencial ao valor do potenciometro
-  int posicaoMaximaConcha = 160; // Valor em graus para posicao maxima da concha
-  int posicaoMinimaConcha = 47; // Valor em graus para posicao maxima da concha
+  int posicaoMaximaConcha = 141; // Valor em graus para posicao maxima da concha
+  int posicaoMinimaConcha = 45; // Valor em graus para posicao maxima da concha
 
 
   //Configurações do braco
@@ -211,7 +211,7 @@ void controleConcha(int valorPotConcha){
   //valorPotConcha = analogRead(pinoPotConcha);
   if(valorPotConcha > 510){
     if(valorPotConcha > 1000){
-      acrescimoConcha = 5;
+      acrescimoConcha = 3.5;
     }else 
     if(valorPotConcha > 900){
        acrescimoConcha = 1.5;
@@ -242,7 +242,7 @@ void controleConcha(int valorPotConcha){
 
   if(valorPotConcha < 500){
     if(valorPotConcha < 25){
-      acrescimoConcha = 5;
+      acrescimoConcha = 3.5;
     }else if(valorPotConcha < 100){
       acrescimoConcha = 1.5;
     }else if(valorPotConcha < 300){
@@ -275,7 +275,7 @@ void controleBraco(int valorPotBraco){
   //valorPotBraco = analogRead(pinoPotBraco);
   if(valorPotBraco > 510){
     if(valorPotBraco > 1000){
-      acrescimoBraco = 5;
+      acrescimoBraco = 3.5;
     }else 
     if(valorPotBraco > 900){
        acrescimoBraco = 1.5;
@@ -303,7 +303,7 @@ void controleBraco(int valorPotBraco){
 
   if(valorPotBraco < 500){
     if(valorPotBraco < 25){
-      acrescimoBraco = 5;
+      acrescimoBraco = 3.5;
     }else if(valorPotBraco < 100){
       acrescimoBraco = 1.5;
     }else if(valorPotBraco < 300){
@@ -337,8 +337,8 @@ void controleConj(int valorPotConj){
   //------ Inicio Controle da Conj ---------------
   //valorPotConj = analogRead(pinoPotConj);
   if(valorPotConj > 520){
-    if(valorPotConj > 1000){
-      acrescimoConj = 5;
+    if(valorPotConj > 1020){
+      acrescimoConj = 3;
     }else 
     if(valorPotConj > 900){
        acrescimoConj = 1.5;
@@ -367,8 +367,8 @@ void controleConj(int valorPotConj){
   }
 
   if(valorPotConj < 500){
-    if(valorPotConj < 25){
-      acrescimoConj = 5;
+    if(valorPotConj < 10){
+      acrescimoConj = 3;
     }else if(valorPotConj < 100){
       acrescimoConj = 1.5;
     }else if(valorPotConj < 300){
@@ -406,7 +406,7 @@ void controleRotMaquina(int valorPotRotMaquina){
   //valorPotRotMaquina = analogRead(pinoPotRotMaquina);
   if(valorPotRotMaquina > 550){
     if(valorPotRotMaquina > 1000){
-      acrescimoRotMaquina = 8;
+      acrescimoRotMaquina = 3.5;
     }else 
     if(valorPotRotMaquina > 900){
        acrescimoRotMaquina = 1.5;
@@ -434,7 +434,7 @@ void controleRotMaquina(int valorPotRotMaquina){
 
   if(valorPotRotMaquina < 480){
     if(valorPotRotMaquina < 25){
-      acrescimoRotMaquina = 8;
+      acrescimoRotMaquina = 3.5;
     }else if(valorPotRotMaquina < 100){
       acrescimoRotMaquina = 1.5;
     }else if(valorPotRotMaquina < 300){
