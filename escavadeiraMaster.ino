@@ -82,7 +82,7 @@
 void setup() {
   Serial.begin(9600);
   pinMode(pinoDemonstracao, INPUT); // Define o pino do botão para demonstração
-  servoConcha.attach(9);  //Pino PWM que manda sinal para o servo da Concha
+  servoConcha.attach(9);  //Pino PWM qu'e manda sinal para o servo da Concha
   servoBraco.attach(10);  //Pino PWM que manda sinal para o servo do Braco
   servoConj.attach(6);  //Pino PWM que manda sinal para o servo do Conjunto articulado
   //servoRotMaquina.attach(11);  //Pino PWM que manda sinal para o servo da Rotação da maquina || Vai ser usado um escravo Attiny88 pois esse pino 11 é usado pelo RF24
@@ -411,9 +411,7 @@ void controleRotMaquina(int valorPotRotMaquina){
     }
 
     posicaoRotMaquina = posicaoRotMaquina + acrescimoRotMaquina;
-    if(posicaoRotMaquina > posicaoMaximaRotMaquina){
-      posicaoRotMaquina = posicaoMaximaRotMaquina;
-    }
+    
     if(posicaoRotMaquinaAntiga != posicaoRotMaquina){
       //servoRotMaquina.write(posicaoRotMaquina); //Aplica a posição da RotMaquina em graus
       int posicaoViaI2C = int(posicaoRotMaquina); // Converte o float para inteiro
@@ -440,9 +438,7 @@ void controleRotMaquina(int valorPotRotMaquina){
     }
 
     posicaoRotMaquina = posicaoRotMaquina - acrescimoRotMaquina;
-    if(posicaoRotMaquina < posicaoMinimaRotMaquina){
-      posicaoRotMaquina = posicaoMinimaRotMaquina;
-    }
+
     if(posicaoRotMaquinaAntiga != posicaoRotMaquina){
       //servoRotMaquina.write(posicaoRotMaquina); //Aplica a posição da RotMaquina em graus
       int posicaoViaI2C = int(posicaoRotMaquina); // Converte o float para inteiro
