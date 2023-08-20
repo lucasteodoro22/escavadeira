@@ -13,11 +13,11 @@
   const byte address[6] = "00001";
 
   //Configurações para DEBUG
-  int debugConcha = 1; // 0 Off / 1 ON
-  int debugBraco = 1; // 0 Off / 1 ON
-  int debugConj = 1; // 0 Off / 1 ON
+  int debugConcha = 0; // 0 Off / 1 ON
+  int debugBraco = 0; // 0 Off / 1 ON
+  int debugConj = 0; // 0 Off / 1 ON
   int debugRotMaquina = 1; // 0 Off / 1 ON
-  int debugMovimento = 1; // 0 Off / 1 ON
+  int debugMovimento = 0; // 0 Off / 1 ON
 
   //Configurações de demonstração
   const int pinoDemonstracao = 13; // Pino digital botão para iniciar a demonstração
@@ -29,7 +29,7 @@
   float posicaoConcha = 100; // Posição da concha ao ligar
   float posicaoConchaAntiga = posicaoConcha;
   float acrescimoConcha = 0; // Acrescimo da concha exponencial ao valor do potenciometro
-  int posicaoMaximaConcha = 141; // Valor em graus para posicao maxima da concha
+  int posicaoMaximaConcha = 140; // Valor em graus para posicao maxima da concha
   int posicaoMinimaConcha = 45; // Valor em graus para posicao maxima da concha
 
 
@@ -40,8 +40,8 @@
   float posicaoBraco = 90; // Posição da Braco ao ligar
   float posicaoBracoAntiga = posicaoBraco;
   float acrescimoBraco = 0; // Acrescimo da Braco exponencial ao valor do potenciometro
-  int posicaoMaximaBraco = 138; // Valor em graus para posicao maxima do braco
-  int posicaoMinimaBraco = 31; // Valor em graus para posicao maxima do braco
+  int posicaoMaximaBraco = 180; // Valor em graus para posicao maxima do braco
+  int posicaoMinimaBraco = 40; // Valor em graus para posicao maxima do braco
 
 
   //Configurações Conjunto articulado
@@ -56,6 +56,7 @@
 
 
   //Configurações Rotacao da maquina
+  byte posicaoServoRotMaquina = 93; //Valor base
   Servo servoRotMaquina;  // Chama a biblioteca para controle do servo da Rotacao da maquina
   int valorPotRotMaquina; //Potenciometro da Rotacao da maquina
   int pinoPotRotMaquina = A3; // Porta Potenciometro do Rotacao da maquina
@@ -82,10 +83,10 @@
 void setup() {
   Serial.begin(9600);
   pinMode(pinoDemonstracao, INPUT); // Define o pino do botão para demonstração
-  servoConcha.attach(9);  //Pino PWM qu'e manda sinal para o servo da Concha
-  servoBraco.attach(10);  //Pino PWM que manda sinal para o servo do Braco
+  servoConcha.attach(10);  //Pino PWM que manda sinal para o servo da Concha
+  servoBraco.attach(9);  //Pino PWM que manda sinal para o servo do Braco
   servoConj.attach(6);  //Pino PWM que manda sinal para o servo do Conjunto articulado
-  //servoRotMaquina.attach(11);  //Pino PWM que manda sinal para o servo da Rotação da maquina || Vai ser usado um escravo Attiny88 pois esse pino 11 é usado pelo RF24
+  //servoRotMaquina.attach(11);  //Pino PWM que manda sinal para o servo da Rotação da maquina || Vai ser usado um arduino escravo pois esse pino 11 é usado pelo RF24
   servoEstDir.attach(5);  //Pino PWM que manda sinal para o servo da Esteira Direita
   servoEstEsq.attach(3);  //Pino PWM que manda sinal para o servo da Esteira Esquerda
 
@@ -94,6 +95,7 @@ void setup() {
   radio.setPALevel(RF24_PA_MIN);
   radio.startListening();//Fica escutando se tem comandos vindo pelo RF
 
+  
   Wire.begin(); // Inicializa a biblioteca Wire (I2C)
 
 }
@@ -103,41 +105,33 @@ void loop() {
   if (radio.available()) {
     char dadosRecebidosRF[15] = "";
     radio.read(&dadosRecebidosRF, sizeof(dadosRecebidosRF));
-    Serial.println(dadosRecebidosRF);
+    //Serial.println(dadosRecebidosRF);
 
     char delimiter = '-';
     String dadosFormatadosRF[10];
     formataDadosRF(dadosRecebidosRF, delimiter, dadosFormatadosRF, 10);
     if(dadosFormatadosRF[1] == "demonstracao"){ //Verifica se foi iniciado o modo demonstração
+      enviaI2CPararMovimentoMaquina();
       demonstracao();
-    }
-    if(dadosFormatadosRF[1] == "3"){
-      //Serial.println(dadosFormatadosRF[0]);
+    }else if(dadosFormatadosRF[1] == "3"){
       int valor = dadosFormatadosRF[0].toInt();
       controleConcha(valor);
-    }
-    if(dadosFormatadosRF[1] == "1"){
-      //Serial.println(dadosFormatadosRF[0]);
+    }else if(dadosFormatadosRF[1] == "1"){
       int valor = dadosFormatadosRF[0].toInt();
       controleBraco(valor);
-    }
-    if(dadosFormatadosRF[1] == "2"){
-      //Serial.println(dadosFormatadosRF[0]);
+    }else if(dadosFormatadosRF[1] == "2"){
       int valor = dadosFormatadosRF[0].toInt();
       controleConj(valor);
-    }
-    if(dadosFormatadosRF[1] == "4"){
-      //Serial.println(dadosFormatadosRF[0]);
+    }else if(dadosFormatadosRF[1] == "4"){
       int valor = dadosFormatadosRF[0].toInt();
       controleRotMaquina(valor);
-    }
-    if(dadosFormatadosRF[1] == "5"){
-      //Serial.println(dadosFormatadosRF[0]);
+    }else if(dadosFormatadosRF[1] == "5"){
       int valor = dadosFormatadosRF[0].toInt();
       controleMovimento(valor);
     }
+  }else{
+    enviaI2CPararMovimentoMaquina();
   }
-   delay(10);
 }
 
 void demonstracao(){
@@ -393,64 +387,42 @@ void controleConj(int valorPotConj){
 }
 
 void controleRotMaquina(int valorPotRotMaquina){
-  //------ Inicio Controle da RotMaquina ---------------
+   //------ Inicio Controle da RotMaquina ---------------
+   if(debugRotMaquina == 1){
+        Serial.print("Velocidade Rotacao Maquina: ");
+        Serial.print(valorPotRotMaquina);
+        Serial.println(" Graus");
+      }
+      
   //valorPotRotMaquina = analogRead(pinoPotRotMaquina);
-  Wire.beginTransmission(8); // Endereço do ATtiny88 escravo por I2C
-  if(valorPotRotMaquina > 550){
-    if(valorPotRotMaquina > 1000){
-      acrescimoRotMaquina = 3.5;
-    }else 
-    if(valorPotRotMaquina > 900){
-       acrescimoRotMaquina = 1.5;
+  
+   if(valorPotRotMaquina > 520){
+    if(valorPotRotMaquina > 1020){
+      enviaI2CMovimentoRotMaquina(105); // Envia a velocidade e forma de posição para o servo
+    }else if(valorPotRotMaquina > 900){
+      enviaI2CMovimentoRotMaquina(97);// Envia a velocidade e forma de posição para o servo
     }else if(valorPotRotMaquina > 700){
-      acrescimoRotMaquina = 1;
+      enviaI2CMovimentoRotMaquina(96);// Envia a velocidade e forma de posição para o servo
     }else if(valorPotRotMaquina > 600){
-      acrescimoRotMaquina = 0.5;
+      enviaI2CMovimentoRotMaquina(95);// Envia a velocidade e forma de posição para o servo
     }else{
-      acrescimoRotMaquina = 0.1;
+      enviaI2CMovimentoRotMaquina(94);// Envia a velocidade e forma de posição para o servo
     }
+   }
 
-    posicaoRotMaquina = posicaoRotMaquina + acrescimoRotMaquina;
-    
-    if(posicaoRotMaquinaAntiga != posicaoRotMaquina){
-      //servoRotMaquina.write(posicaoRotMaquina); //Aplica a posição da RotMaquina em graus
-      int posicaoViaI2C = int(posicaoRotMaquina); // Converte o float para inteiro
-      Wire.write(posicaoViaI2C); //Aplica a posição da RotMaquina em graus
-      if(debugRotMaquina == 1){
-        Serial.print("Valor Potenciometro Rotacao Maquina: ");
-        Serial.print(valorPotRotMaquina);
-        Serial.println("");
-      }
-    }
-  }
-
-  if(valorPotRotMaquina < 480){
-    if(valorPotRotMaquina < 25){
-      acrescimoRotMaquina = 3.5;
+  if(valorPotRotMaquina < 550){
+    if(valorPotRotMaquina < 10){
+      enviaI2CMovimentoRotMaquina(80);// Envia a velocidade e forma de posição para o servo
     }else if(valorPotRotMaquina < 100){
-      acrescimoRotMaquina = 1.5;
+      enviaI2CMovimentoRotMaquina(89);// Envia a velocidade e forma de posição para o servo
     }else if(valorPotRotMaquina < 300){
-      acrescimoRotMaquina = 1;
+      enviaI2CMovimentoRotMaquina(90);// Envia a velocidade e forma de posição para o servo
     }else if(valorPotRotMaquina < 400){
-      acrescimoRotMaquina = 0.5;
+      enviaI2CMovimentoRotMaquina(91);// Envia a velocidade e forma de posição para o servo
     }else{
-      acrescimoRotMaquina = 0.1;
+      enviaI2CMovimentoRotMaquina(92);// Envia a velocidade e forma de posição para o servo
     }
-
-    posicaoRotMaquina = posicaoRotMaquina - acrescimoRotMaquina;
-
-    if(posicaoRotMaquinaAntiga != posicaoRotMaquina){
-      //servoRotMaquina.write(posicaoRotMaquina); //Aplica a posição da RotMaquina em graus
-      int posicaoViaI2C = int(posicaoRotMaquina); // Converte o float para inteiro
-      Wire.write(posicaoViaI2C); //Aplica a posição da RotMaquina em graus
-      if(debugRotMaquina == 1){
-        Serial.print("Valor Potenciometro Rotacao Maquina: ");
-        Serial.print(valorPotRotMaquina);
-        Serial.println("");
-      }
-    }
-  }
-  Wire.endTransmission();
+   }
   return;
   //------ Fim Controle da RotMaquina ---------------
 }
@@ -521,4 +493,18 @@ void formataDadosRF(const String &inputString, char delimiter, String *outputArr
     }
 
     outputArray[partIndex] = inputString.substring(startIndex);
+}
+
+void enviaI2CMovimentoRotMaquina(byte velocidade){
+  posicaoServoRotMaquina = velocidade;
+  Wire.beginTransmission(0x08); // Endereço do Arduino escravo por I2C
+  Wire.write(posicaoServoRotMaquina); //Aplica a posição da RotMaquina em graus
+  Wire.endTransmission();
+}
+
+void enviaI2CPararMovimentoMaquina(){
+  if(posicaoServoRotMaquina != 93){
+    posicaoServoRotMaquina = 93;//Parar de Rotacionar maquina
+    enviaI2CMovimentoRotMaquina(93);//Parar de Rotacionar maquina
+  }
 }
