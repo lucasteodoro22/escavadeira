@@ -16,8 +16,8 @@
   int debugConcha = 0; // 0 Off / 1 ON
   int debugBraco = 0; // 0 Off / 1 ON
   int debugConj = 0; // 0 Off / 1 ON
-  int debugRotMaquina = 1; // 0 Off / 1 ON
-  int debugMovimento = 0; // 0 Off / 1 ON
+  int debugRotMaquina = 0; // 0 Off / 1 ON
+  int debugMovimento = 1; // 0 Off / 1 ON
 
   //Configurações de demonstração
   const int pinoDemonstracao = 13; // Pino digital botão para iniciar a demonstração
@@ -127,10 +127,16 @@ void loop() {
       controleRotMaquina(valor);
     }else if(dadosFormatadosRF[1] == "5"){
       int valor = dadosFormatadosRF[0].toInt();
+      controleMovimentoLateral(valor);
+    }else if(dadosFormatadosRF[1] == "6"){
+      int valor = dadosFormatadosRF[0].toInt();
       controleMovimento(valor);
+    }else{
+      //pararMovimentoEsteira();
     }
   }else{
     enviaI2CPararMovimentoMaquina();
+    pararMovimentoEsteira();
   }
 }
 
@@ -427,7 +433,8 @@ void controleRotMaquina(int valorPotRotMaquina){
   //------ Fim Controle da RotMaquina ---------------
 }
 
-void controleMovimento(int valorPotFrenteRe){
+void controleMovimentoLateral(int valorPotFrenteRe){
+  return;
   //------ Inicio Controle Movimento ---------------
     
     //valorPotFrenteRe = analogRead(pinoPotFrenteRe); 
@@ -482,6 +489,38 @@ void controleMovimento(int valorPotFrenteRe){
   //------ Fim Controle Movimento ---------------
 }
 
+void controleMovimento(int valorPotFrenteRe){
+  //------ Inicio Controle Movimento ---------------
+    
+    //valorPotFrenteRe = analogRead(pinoPotFrenteRe); 
+    //Serial.println(valorPotFrenteRe);
+      if(valorPotFrenteRe > 600){
+        int valorAceleracao = map(valorPotFrenteRe, 600, 1023, 90, 0);
+        //Serial.println(valorAceleracao); 
+        int diferenca = valorAceleracao - 90;
+        int valorAceleracaoDir = 90 - diferenca;
+        servoEstDir.write(valorAceleracaoDir); //Acelera com valor em graus
+        servoEstEsq.write(valorAceleracao); //Acelera com valor em graus
+        delay(30); 
+      }else if(valorPotFrenteRe < 400){
+        int valorAceleracao = map(valorPotFrenteRe, 0, 400, 180, 90);
+        //Serial.println(valorAceleracao); 
+        int diferenca = 90 - valorAceleracao;
+        int valorAceleracaoDir = 95 + diferenca;
+        servoEstDir.write(valorAceleracaoDir); //Acelera com valor em graus
+        servoEstEsq.write(valorAceleracao); //Acelera com valor em graus
+        delay(30); 
+      }else{
+        servoEstDir.write(90); // Para o movimento
+        servoEstEsq.write(90); // Para o movimento
+      }
+      if(debugMovimento == 1){
+        Serial.println(valorPotFrenteRe);  
+      }
+    return;
+  //------ Fim Controle Movimento ---------------
+}
+
 void formataDadosRF(const String &inputString, char delimiter, String *outputArray, int maxParts) {
     int partIndex = 0;
     int startIndex = 0;
@@ -507,4 +546,9 @@ void enviaI2CPararMovimentoMaquina(){
     posicaoServoRotMaquina = 93;//Parar de Rotacionar maquina
     enviaI2CMovimentoRotMaquina(93);//Parar de Rotacionar maquina
   }
+}
+
+void pararMovimentoEsteira(){
+  servoEstDir.write(90); //Para Movimentacao maquina
+  servoEstEsq.write(90); //Para Movimentacao maquina
 }
