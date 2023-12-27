@@ -122,21 +122,30 @@ void loop() {
     }else if(dadosFormatadosRF[1] == "2"){
       int valor = dadosFormatadosRF[0].toInt();
       controleConj(valor);
-    }else if(dadosFormatadosRF[1] == "4"){
+    }else if(dadosFormatadosRF[1] == "4"){ // Rotacao
       int valor = dadosFormatadosRF[0].toInt();
       controleRotMaquina(valor);
-    }else if(dadosFormatadosRF[1] == "5"){
-      int valor = dadosFormatadosRF[0].toInt();
-      controleMovimentoLateral(valor);
-    }else if(dadosFormatadosRF[1] == "6"){
-      int valor = dadosFormatadosRF[0].toInt();
-      controleMovimento(valor);
-    }else{
-      //pararMovimentoEsteira();
+    }else if(dadosFormatadosRF[1] == "5"){ // Movimento
+      String valor = dadosFormatadosRF[0];
+      
+      int posicaoDirEsq, posicaoFrenteRe;
+      int posicaoDelimitador = valor.indexOf('=');
+      
+      if (posicaoDelimitador != -1) {
+        // Divide a string com base no caractere '='
+        String primeiroParte = valor.substring(0, posicaoDelimitador);
+        String segundoParte = valor.substring(posicaoDelimitador + 1);
+        
+        // Converte as partes para inteiros
+        posicaoDirEsq = primeiroParte.toInt();
+        posicaoFrenteRe = segundoParte.toInt();
+        
+        controleMovimento(posicaoFrenteRe,posicaoDirEsq);
+      }
+      
     }
   }else{
     enviaI2CPararMovimentoMaquina();
-    pararMovimentoEsteira();
   }
 }
 
@@ -433,92 +442,30 @@ void controleRotMaquina(int valorPotRotMaquina){
   //------ Fim Controle da RotMaquina ---------------
 }
 
-void controleMovimentoLateral(int valorPotFrenteRe){
-  return;
-  //------ Inicio Controle Movimento ---------------
-    
-    //valorPotFrenteRe = analogRead(pinoPotFrenteRe); 
-    //Serial.println(valorPotFrenteRe);
-    if(valorPotFrenteRe > 490 && valorPotFrenteRe < 520){ // Confirma se esta parado para virar parado
-      //Controla virar parado
-      valorPotEstDirEsq = analogRead(pinoPotEstDirEsq);
-      if(valorPotEstDirEsq > 550){
-        int valorAceleracao = map(valorPotEstDirEsq, 0, 1023, 0, 180);
-        Serial.println(valorAceleracao);
-        servoEstDir.write(valorAceleracao); //Acelera com valor em graus
-        servoEstEsq.write(valorAceleracao); //Acelera com valor em graus
-        //delay(10); 
-      }else if(valorPotEstDirEsq < 450){
-        int valorAceleracao = map(valorPotEstDirEsq, 0, 1023, 0, 180);
-        servoEstDir.write(valorAceleracao); //Acelera com valor em graus
-        servoEstEsq.write(valorAceleracao); //Acelera com valor em graus
-        //delay(10); 
-      }else{
-        servoEstDir.write(93); // Para o movimento
-        servoEstEsq.write(93); // Para o movimento
-      }
-      if(debugMovimento == 1){
-        //Serial.println(valorPotEstDirEsq);  
-      }
-    }
-    else{ //Controla Frente e ré e virar andando
-      if(valorPotFrenteRe > 600){
-        int valorAceleracao = map(valorPotFrenteRe, 0, 1023, 0, 180);
-        int diferenca = valorAceleracao - 90;
-        int valorAceleracaoDir = 90 - diferenca;
-        servoEstDir.write(valorAceleracaoDir); //Acelera com valor em graus
-        servoEstEsq.write(valorAceleracao); //Acelera com valor em graus
-        //delay(10); 
-      }else if(valorPotFrenteRe < 400){
-        int valorAceleracao = map(valorPotFrenteRe, 0, 1023, 0, 180);
-        int diferenca = 90 - valorAceleracao;
-        int valorAceleracaoDir = 90 + diferenca;
-        servoEstDir.write(valorAceleracaoDir); //Acelera com valor em graus
-        servoEstEsq.write(valorAceleracao); //Acelera com valor em graus
-        //delay(10); 
-      }else{
-        servoEstDir.write(93); // Para o movimento
-        servoEstEsq.write(93); // Para o movimento
-      }
-      if(debugMovimento == 1){
-        Serial.println(valorPotFrenteRe);  
-      }
-    }
-    //Controla virar parado
-    return;
-  //------ Fim Controle Movimento ---------------
-}
+void controleMovimento(int valorPotFrenteRe, int valorPotEstDirEsq){
+   // Mapeia os valores lidos para o intervalo de controle dos servos (0-180)
+    int velocidadeEsquerda = map(valorPotEstDirEsq, 0, 1023, 0, 180);
+    int velocidadeDireita = map(valorPotEstDirEsq, 0, 1023, 0, 180);
 
-void controleMovimento(int valorPotFrenteRe){
-  //------ Inicio Controle Movimento ---------------
-    
-    //valorPotFrenteRe = analogRead(pinoPotFrenteRe); 
-    //Serial.println(valorPotFrenteRe);
-      if(valorPotFrenteRe > 600){
-        int valorAceleracao = map(valorPotFrenteRe, 600, 1023, 90, 0);
-        //Serial.println(valorAceleracao); 
-        int diferenca = valorAceleracao - 90;
-        int valorAceleracaoDir = 90 - diferenca;
-        servoEstDir.write(valorAceleracaoDir); //Acelera com valor em graus
-        servoEstEsq.write(valorAceleracao); //Acelera com valor em graus
-        delay(30); 
-      }else if(valorPotFrenteRe < 400){
-        int valorAceleracao = map(valorPotFrenteRe, 0, 400, 180, 90);
-        //Serial.println(valorAceleracao); 
-        int diferenca = 90 - valorAceleracao;
-        int valorAceleracaoDir = 95 + diferenca;
-        servoEstDir.write(valorAceleracaoDir); //Acelera com valor em graus
-        servoEstEsq.write(valorAceleracao); //Acelera com valor em graus
-        delay(30); 
-      }else{
-        servoEstDir.write(90); // Para o movimento
-        servoEstEsq.write(90); // Para o movimento
-      }
-      if(debugMovimento == 1){
-        Serial.println(valorPotFrenteRe);  
-      }
-    return;
-  //------ Fim Controle Movimento ---------------
+    int direcao = map(valorPotFrenteRe, 0, 1023, 90, -90);
+
+    int diferencaVelocidade = abs(direcao); // Calcula a diferença de velocidade entre os motores para virar
+
+    // Se a direção for para a direita
+    if (direcao > 0) {
+      velocidadeDireita -= diferencaVelocidade;
+    }
+    // Se a direção for para a esquerda
+    else if (direcao < 0) {
+      velocidadeEsquerda -= diferencaVelocidade;
+    }
+
+    // Controla a velocidade dos servos de acordo com a posição do joystick
+    servoEstEsq.write(180 - velocidadeEsquerda);
+    servoEstDir.write(velocidadeDireita); // Inverte a velocidade
+
+  delay(10);
+  pararMovimentoEsteira();
 }
 
 void formataDadosRF(const String &inputString, char delimiter, String *outputArray, int maxParts) {
