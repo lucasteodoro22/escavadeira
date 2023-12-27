@@ -60,17 +60,14 @@ void loop(){
     radio.write(&text, sizeof(text));
   }
   uint16_t valorMovimento = ADC_Read(analogMovimento); 
-  if(valorMovimento > 520 || valorMovimento < 500){
-    char text[10];
-    itoa(valorMovimento, text, 10);
-    strcat(text, "-5");
-    radio.write(&text, sizeof(text));
-  }  
   uint16_t valorDirEsq = ADC_Read(analogDirEsq); 
-  if(valorDirEsq > 520 || valorDirEsq < 500){
-    char text[10];
+  if((valorMovimento > 520 || valorMovimento < 500) || (valorDirEsq > 520 || valorDirEsq < 500)){
+    uint16_t valorDirEsq = ADC_Read(analogDirEsq); 
+    char text[25];
     itoa(valorDirEsq, text, 10);
-    strcat(text, "-6");
+    strcat(text, "=");
+    itoa(valorMovimento, text+strlen(text) , 10);
+    strcat(text, "-5");
     radio.write(&text, sizeof(text));
   }  
      
@@ -98,4 +95,3 @@ uint16_t ADC_Read(uint8_t channel) {
     // Retorna o valor da conversão
     return ADC;
 }
-
