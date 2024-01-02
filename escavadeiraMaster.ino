@@ -17,7 +17,7 @@
   int debugBraco = 0; // 0 Off / 1 ON
   int debugConj = 0; // 0 Off / 1 ON
   int debugRotMaquina = 0; // 0 Off / 1 ON
-  int debugMovimento = 1; // 0 Off / 1 ON
+  int debugMovimento = 0; // 0 Off / 1 ON
 
   //Configurações de demonstração
   const int pinoDemonstracao = 13; // Pino digital botão para iniciar a demonstração
@@ -29,8 +29,8 @@
   float posicaoConcha = 100; // Posição da concha ao ligar
   float posicaoConchaAntiga = posicaoConcha;
   float acrescimoConcha = 0; // Acrescimo da concha exponencial ao valor do potenciometro
-  int posicaoMaximaConcha = 140; // Valor em graus para posicao maxima da concha
-  int posicaoMinimaConcha = 45; // Valor em graus para posicao maxima da concha
+  int posicaoMaximaConcha = 157; // Valor em graus para posicao maxima da concha
+  int posicaoMinimaConcha = 35; // Valor em graus para posicao maxima da concha
 
 
   //Configurações do braco
@@ -41,7 +41,7 @@
   float posicaoBracoAntiga = posicaoBraco;
   float acrescimoBraco = 0; // Acrescimo da Braco exponencial ao valor do potenciometro
   int posicaoMaximaBraco = 180; // Valor em graus para posicao maxima do braco
-  int posicaoMinimaBraco = 40; // Valor em graus para posicao maxima do braco
+  int posicaoMinimaBraco = 45; // Valor em graus para posicao maxima do braco
 
 
   //Configurações Conjunto articulado
@@ -113,13 +113,13 @@ void loop() {
     if(dadosFormatadosRF[1] == "demonstracao"){ //Verifica se foi iniciado o modo demonstração
       enviaI2CPararMovimentoMaquina();
       demonstracao();
-    }else if(dadosFormatadosRF[1] == "3"){
+    }else if(dadosFormatadosRF[1] == "1"){ // Concha
       int valor = dadosFormatadosRF[0].toInt();
       controleConcha(valor);
-    }else if(dadosFormatadosRF[1] == "1"){
+    }else if(dadosFormatadosRF[1] == "3"){ // Braco
       int valor = dadosFormatadosRF[0].toInt();
       controleBraco(valor);
-    }else if(dadosFormatadosRF[1] == "2"){
+    }else if(dadosFormatadosRF[1] == "2"){ // Conjunto
       int valor = dadosFormatadosRF[0].toInt();
       controleConj(valor);
     }else if(dadosFormatadosRF[1] == "4"){ // Rotacao
@@ -127,10 +127,8 @@ void loop() {
       controleRotMaquina(valor);
     }else if(dadosFormatadosRF[1] == "5"){ // Movimento
       String valor = dadosFormatadosRF[0];
-      
       int posicaoDirEsq, posicaoFrenteRe;
       int posicaoDelimitador = valor.indexOf('=');
-      
       if (posicaoDelimitador != -1) {
         // Divide a string com base no caractere '='
         String primeiroParte = valor.substring(0, posicaoDelimitador);
@@ -142,10 +140,7 @@ void loop() {
         
         controleMovimento(posicaoFrenteRe,posicaoDirEsq);
       }
-      
     }
-  }else{
-    enviaI2CPararMovimentoMaquina();
   }
 }
 
@@ -220,14 +215,14 @@ void controleConcha(int valorPotConcha){
   //valorPotConcha = analogRead(pinoPotConcha);
   if(valorPotConcha > 510){
     if(valorPotConcha > 1000){
-      acrescimoConcha = 3.5;
+      acrescimoConcha = 1;
     }else 
     if(valorPotConcha > 900){
-       acrescimoConcha = 1.5;
+       acrescimoConcha = 0.7;
     }else if(valorPotConcha > 700){
-      acrescimoConcha = 1;
-    }else if(valorPotConcha > 600){
       acrescimoConcha = 0.5;
+    }else if(valorPotConcha > 600){
+      acrescimoConcha = 0.3;
     }else{
       acrescimoConcha = 0.1;
     }
@@ -251,13 +246,13 @@ void controleConcha(int valorPotConcha){
 
   if(valorPotConcha < 500){
     if(valorPotConcha < 25){
-      acrescimoConcha = 3.5;
-    }else if(valorPotConcha < 100){
-      acrescimoConcha = 1.5;
-    }else if(valorPotConcha < 300){
       acrescimoConcha = 1;
-    }else if(valorPotConcha < 400){
+    }else if(valorPotConcha < 100){
+      acrescimoConcha = 0.7;
+    }else if(valorPotConcha < 300){
       acrescimoConcha = 0.5;
+    }else if(valorPotConcha < 400){
+      acrescimoConcha = 0.3;
     }else{
       acrescimoConcha = 0.1;
     }
@@ -284,14 +279,14 @@ void controleBraco(int valorPotBraco){
   //valorPotBraco = analogRead(pinoPotBraco);
   if(valorPotBraco > 510){
     if(valorPotBraco > 1000){
-      acrescimoBraco = 3.5;
+      acrescimoBraco = 1;
     }else 
     if(valorPotBraco > 900){
-       acrescimoBraco = 1.5;
+       acrescimoBraco = 0.7;
     }else if(valorPotBraco > 700){
-      acrescimoBraco = 1;
-    }else if(valorPotBraco > 600){
       acrescimoBraco = 0.5;
+    }else if(valorPotBraco > 600){
+      acrescimoBraco = 0.3;
     }else{
       acrescimoBraco = 0.1;
     }
@@ -312,13 +307,13 @@ void controleBraco(int valorPotBraco){
 
   if(valorPotBraco < 500){
     if(valorPotBraco < 25){
-      acrescimoBraco = 3.5;
-    }else if(valorPotBraco < 100){
-      acrescimoBraco = 1.5;
-    }else if(valorPotBraco < 300){
       acrescimoBraco = 1;
-    }else if(valorPotBraco < 400){
+    }else if(valorPotBraco < 100){
+      acrescimoBraco = 0.7;
+    }else if(valorPotBraco < 300){
       acrescimoBraco = 0.5;
+    }else if(valorPotBraco < 400){
+      acrescimoBraco = 0.3;
     }else{
       acrescimoBraco = 0.1;
     }
@@ -344,42 +339,14 @@ void controleConj(int valorPotConj){
   //------ Inicio Controle da Conj ---------------
   //valorPotConj = analogRead(pinoPotConj);
   if(valorPotConj > 520){
-    if(valorPotConj > 1020){
-      acrescimoConj = 3;
-    }else 
-    if(valorPotConj > 900){
-       acrescimoConj = 1.5;
+    if(valorPotConj > 1000){
+      acrescimoConj = 1;
+    }else if(valorPotConj > 900){
+       acrescimoConj = 0.7;
     }else if(valorPotConj > 700){
-      acrescimoConj = 1;
+      acrescimoConj = 0.5;
     }else if(valorPotConj > 600){
-      acrescimoConj = 0.5;
-    }else{
-      acrescimoConj = 0.1;
-    }
-
-    posicaoConj = posicaoConj + acrescimoConj;
-    if(posicaoConj > posicaoMaximaConj){
-      posicaoConj = posicaoMaximaConj;
-    }
-    if(posicaoConjAntiga != posicaoConj){
-      servoConj.write(posicaoConj); //Aplica a posição da Conj em graus
-      if(debugConj == 1){
-        Serial.print("Posicao do Conjuto Articulado: ");
-        Serial.print(posicaoConj);
-        Serial.println(" Graus");
-      }
-    }
-  }
-
-  if(valorPotConj < 500){
-    if(valorPotConj < 10){
-      acrescimoConj = 3;
-    }else if(valorPotConj < 100){
-      acrescimoConj = 1.5;
-    }else if(valorPotConj < 300){
-      acrescimoConj = 1;
-    }else if(valorPotConj < 400){
-      acrescimoConj = 0.5;
+      acrescimoConj = 0.3;
     }else{
       acrescimoConj = 0.1;
     }
@@ -391,7 +358,34 @@ void controleConj(int valorPotConj){
     if(posicaoConjAntiga != posicaoConj){
       servoConj.write(posicaoConj); //Aplica a posição da Conj em graus
       if(debugConj == 1){
-        Serial.print("Posição do Conjuto Articulado: ");
+        Serial.print("Posicao do Conjuto Articulado Maior: ");
+        Serial.print(posicaoConj);
+        Serial.println(" Graus");
+      }
+    }
+  }
+
+  if(valorPotConj < 500){
+    if(valorPotConj < 25){
+      acrescimoConj = 1;
+    }else if(valorPotConj < 100){
+      acrescimoConj = 0.7;
+    }else if(valorPotConj < 300){
+      acrescimoConj = 0.5;
+    }else if(valorPotConj < 400){
+      acrescimoConj = 0.3;
+    }else{
+      acrescimoConj = 0.1;
+    }
+
+    posicaoConj = posicaoConj + acrescimoConj;
+    if(posicaoConj > posicaoMaximaConj){
+      posicaoConj = posicaoMaximaConj;
+    }
+    if(posicaoConjAntiga != posicaoConj){
+      servoConj.write(posicaoConj); //Aplica a posição da Conj em graus
+      if(debugConj == 1){
+        Serial.print("Posição do Conjuto Articulado Menor: ");
         Serial.print(posicaoConj);
         Serial.println(" Graus");
       }
@@ -403,41 +397,19 @@ void controleConj(int valorPotConj){
 
 void controleRotMaquina(int valorPotRotMaquina){
    //------ Inicio Controle da RotMaquina ---------------
-   if(debugRotMaquina == 1){
-        Serial.print("Velocidade Rotacao Maquina: ");
-        Serial.print(valorPotRotMaquina);
-        Serial.println(" Graus");
-      }
+   
       
   //valorPotRotMaquina = analogRead(pinoPotRotMaquina);
   
-   if(valorPotRotMaquina > 520){
-    if(valorPotRotMaquina > 1020){
-      enviaI2CMovimentoRotMaquina(105); // Envia a velocidade e forma de posição para o servo
-    }else if(valorPotRotMaquina > 900){
-      enviaI2CMovimentoRotMaquina(97);// Envia a velocidade e forma de posição para o servo
-    }else if(valorPotRotMaquina > 700){
-      enviaI2CMovimentoRotMaquina(96);// Envia a velocidade e forma de posição para o servo
-    }else if(valorPotRotMaquina > 600){
-      enviaI2CMovimentoRotMaquina(95);// Envia a velocidade e forma de posição para o servo
-    }else{
-      enviaI2CMovimentoRotMaquina(94);// Envia a velocidade e forma de posição para o servo
+   int velocidadeRotacaoMaquina = map(valorPotRotMaquina, 1023, 0, 89, 96);
+   enviaI2CMovimentoRotMaquina(velocidadeRotacaoMaquina);// Envia a velocidade e forma de posição para o servo
+   if(debugRotMaquina == 1){
+        Serial.print("Velocidade Rotacao Maquina: ");
+        Serial.print(velocidadeRotacaoMaquina);
+        Serial.println(" Graus");
     }
-   }
-
-  if(valorPotRotMaquina < 550){
-    if(valorPotRotMaquina < 10){
-      enviaI2CMovimentoRotMaquina(80);// Envia a velocidade e forma de posição para o servo
-    }else if(valorPotRotMaquina < 100){
-      enviaI2CMovimentoRotMaquina(89);// Envia a velocidade e forma de posição para o servo
-    }else if(valorPotRotMaquina < 300){
-      enviaI2CMovimentoRotMaquina(90);// Envia a velocidade e forma de posição para o servo
-    }else if(valorPotRotMaquina < 400){
-      enviaI2CMovimentoRotMaquina(91);// Envia a velocidade e forma de posição para o servo
-    }else{
-      enviaI2CMovimentoRotMaquina(92);// Envia a velocidade e forma de posição para o servo
-    }
-   }
+   delay(30); //Pausa
+   enviaI2CPararMovimentoMaquina(); //Para a rotacao apos o delay
   return;
   //------ Fim Controle da RotMaquina ---------------
 }
@@ -489,10 +461,7 @@ void enviaI2CMovimentoRotMaquina(byte velocidade){
 }
 
 void enviaI2CPararMovimentoMaquina(){
-  if(posicaoServoRotMaquina != 93){
-    posicaoServoRotMaquina = 93;//Parar de Rotacionar maquina
-    enviaI2CMovimentoRotMaquina(93);//Parar de Rotacionar maquina
-  }
+    enviaI2CMovimentoRotMaquina(92);//Parar de Rotacionar maquina
 }
 
 void pararMovimentoEsteira(){
